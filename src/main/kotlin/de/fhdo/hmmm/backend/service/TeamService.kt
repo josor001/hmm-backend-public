@@ -46,8 +46,19 @@ class TeamService {
         return Team.toDto(teamRepo.save(foundTeam.get()))
     }
 
-    fun removeMicroservice(teamId : Long, serviceId : Long) : SoftwaresystemDto? {
-        TODO("NOT YET IMPLEMENTED")
+    fun removeMicroservice(teamId : Long, serviceId : Long) : Boolean? {
+        val foundTeam = teamRepo.findById(teamId)
+        val foundService = microserviceRepo.findById(serviceId)
+        if(foundTeam.isEmpty) {
+            throw NoSuchElementException("No Team with id ${teamId} found.")
+        }
+        if(foundService.isEmpty) {
+            throw NoSuchElementException("No Microservice with id ${serviceId} found.")
+        }
+        if(foundTeam.get().ownedMicroservices.remove(foundService.get())) {
+            teamRepo.save(foundTeam.get())
+            return true
+        } else return false
     }
     /**
      * Creates a new *Team* based on the given *name*.

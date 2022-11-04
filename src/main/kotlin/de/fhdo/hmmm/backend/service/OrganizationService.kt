@@ -3,6 +3,7 @@ package de.fhdo.hmmm.backend.service
 import de.fhdo.hmmm.backend.dto.OrganizationDto
 import de.fhdo.hmmm.backend.dto.TeamDto
 import de.fhdo.hmmm.backend.model.Organization
+import de.fhdo.hmmm.backend.model.Softwaresystem
 import de.fhdo.hmmm.backend.repository.OrganizationRepository
 import de.fhdo.hmmm.backend.repository.SoftwaresystemRepository
 import de.fhdo.hmmm.backend.repository.TeamRepository
@@ -30,20 +31,53 @@ class OrganizationService {
     lateinit var teamRepo : TeamRepository
 
     fun addTeam(orgaId : Long, teamId : Long) : OrganizationDto? {
-        TODO("NOT YET IMPLEMENTED")
+        val foundOrga = orgaRepo.findById(orgaId)
+        if(foundOrga.isEmpty)
+            throw NoSuchElementException("No Organization with id ${orgaId} found.")
+        val foundteam = teamRepo.findById(teamId)
+        if(foundteam.isEmpty)
+            throw NoSuchElementException("No Team with id ${teamId} found.")
+        if(foundOrga.get().teams.add(foundteam.get()))
+            return Organization.toDto(orgaRepo.save(foundOrga.get()))
+        else throw Exception("Error while adding team with id ${teamId} to organization with id ${orgaId}.")
     }
 
-    fun removeTeam(orgaId : Long, teamId : Long) : OrganizationDto? {
-        TODO("NOT YET IMPLEMENTED")
+    fun removeTeam(orgaId : Long, teamId : Long) : Boolean {
+        val foundOrga = orgaRepo.findById(orgaId)
+        val foundTeam = teamRepo.findById(teamId)
+        if(foundOrga.isEmpty) {
+            throw NoSuchElementException("No Organization with id ${orgaId} found.")
+        }
+        if(foundTeam.isEmpty) {
+            throw NoSuchElementException("No Team with id ${teamId} found.")
+        }
+        if(foundOrga.get().teams.remove(foundTeam.get())) {
+            orgaRepo.save(foundOrga.get())
+            return true
+        } else return false
     }
 
-    fun updateSoftwaresystem(orgaId : Long, systemId : Long) : OrganizationDto? {
-        TODO("NOT YET IMPLEMENTED")
+    fun linkSoftwaresystem(orgaId : Long, systemId : Long) : OrganizationDto? {
+        val foundOrga = orgaRepo.findById(orgaId)
+        if(foundOrga.isEmpty)
+            throw NoSuchElementException("No Organization with id ${orgaId} found.")
+        val foundSystem = systemRepo.findById(systemId)
+        if(foundSystem.isEmpty)
+            throw NoSuchElementException("No System with id ${systemId} found.")
+        foundOrga.get().systemUnderDevelopment = foundSystem.get()
+        return Organization.toDto(orgaRepo.save(foundOrga.get()))
     }
 
-    fun removeSoftwaresystem(orgaId : Long) : OrganizationDto? {
-        TODO("NOT YET IMPLEMENTED")
-        // CHECK CASCADE TYPES for all classes.
+    fun unlinkSoftwaresystem(orgaId : Long) : Boolean {
+        val foundOrga = orgaRepo.findById(orgaId)
+        if(foundOrga.isEmpty)
+            throw NoSuchElementException("No Organization with id ${orgaId} found.")
+        foundOrga.get().systemUnderDevelopment = null
+        if(orgaRepo.save(foundOrga.get()).systemUnderDevelopment == null) {
+            return true
+        } else return false
+
+        TODO("CHECK CASCADE TYPES for all classes.")
         // In this case, the softwaresystem instance although not linked should not be deleted!
     }
     /**

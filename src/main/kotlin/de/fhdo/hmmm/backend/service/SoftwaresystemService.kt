@@ -46,8 +46,19 @@ class SoftwaresystemService {
         return Softwaresystem.toDto(systemRepo.save(foundSystem.get()))
     }
 
-    fun removeMicroservice(systemId : Long, serviceId : Long) : SoftwaresystemDto? {
-        TODO("NOT YET IMPLEMENTED")
+    fun removeMicroservice(systemId : Long, serviceId : Long) : Boolean {
+        val foundSystem = systemRepo.findById(systemId)
+        val foundService = microserviceRepo.findById(serviceId)
+        if(foundSystem.isEmpty) {
+            throw NoSuchElementException("No System with id ${systemId} found.")
+        }
+        if(foundService.isEmpty) {
+            throw NoSuchElementException("No Microservice with id ${serviceId} found.")
+        }
+        if(foundSystem.get().components.remove(foundService.get())) {
+            systemRepo.save(foundSystem.get())
+            return true
+        } else return false
     }
     /**
      * Creates a new *Softwaresystem* based on the given *name*.
