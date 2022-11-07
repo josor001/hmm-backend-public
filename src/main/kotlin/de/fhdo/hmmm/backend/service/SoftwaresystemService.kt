@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service
  */
 @Service
 class SoftwaresystemService {
-    val logger = LoggerFactory.getLogger(TeamService::class.java)
+    val logger = LoggerFactory.getLogger(SoftwaresystemService::class.java)
 
     @Autowired
     lateinit var systemRepo : SoftwaresystemRepository

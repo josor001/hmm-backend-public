@@ -27,8 +27,8 @@ class SoftwaresystemController(val service: SoftwaresystemService) {
     }
 
     @PutMapping("/")
-    private fun updateTeam(@RequestBody team: SoftwaresystemDto): Mono<SoftwaresystemDto?>? {
-        return Mono.justOrEmpty(service.update(team))
+    private fun updateTeam(@RequestBody system: SoftwaresystemDto): Mono<SoftwaresystemDto?>? {
+        return Mono.justOrEmpty(service.update(system))
     }
 
     @PutMapping("/{id}/microservices/")
@@ -46,11 +46,4 @@ class SoftwaresystemController(val service: SoftwaresystemService) {
         return Mono.justOrEmpty(service.delete(id))
     }
 
-    /**
-    GET - /users - Returns a list of users
-    GET - users/100 - Returns a specific user
-    POST - /users - Create a new user
-    PUT - /users/ - Updates a specific user
-    DELETE - /users/711 - Deletes a specific user
-     */
 }

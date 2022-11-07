@@ -1,8 +1,6 @@
 package de.fhdo.hmmm.backend.model
 
-import de.fhdo.hmmm.backend.dto.MicroserviceDto
 import de.fhdo.hmmm.backend.dto.ModelArtifactDto
-import de.fhdo.hmmm.backend.dto.OrganizationDto
 import javax.persistence.*
 
 @Entity
@@ -11,10 +9,10 @@ class ModelArtifact(
     val name: String,
 
     @Column(nullable = false)
-    val kind: ModelKind,
+    val kind: String,
 
-    @Column(nullable = true)
-    var relativeLocation: String?,
+    @Column(nullable = false)
+    var location: String,
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "microservice_id")
@@ -27,7 +25,7 @@ class ModelArtifact(
     override fun toString(): String {
         return "ModelArtifact(name='$name', " +
                 "kind=$kind, " +
-                "relativeLocation='$relativeLocation', " +
+                "relativeLocation='$location', " +
                 "microservice=$microservice, " +
                 "id=$id)"
     }
@@ -38,7 +36,7 @@ class ModelArtifact(
                 dto.id = model.id
                 dto.name = model.name
                 dto.kind = model.kind
-                dto.relativeLocation = model.relativeLocation
+                dto.location = model.location
                 dto.microserviceId = model.microservice.id
                 return dto
             } catch (e : Exception) {
