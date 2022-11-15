@@ -36,7 +36,7 @@ class OrganizationController(val service: OrganizationService) {
     }
 
     @DeleteMapping("/{orgaId}/teams/{teamId}")
-    private fun deleteTeamById(@PathVariable orgaId: Long, @PathVariable teamId: Long): Mono<Boolean?> {
+    private fun removeTeamById(@PathVariable orgaId: Long, @PathVariable teamId: Long): Mono<Boolean?> {
         return Mono.justOrEmpty(service.removeTeam(orgaId, teamId))
     }
 

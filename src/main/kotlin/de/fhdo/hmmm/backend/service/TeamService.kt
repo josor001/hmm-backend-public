@@ -80,7 +80,7 @@ class TeamService {
 
     /**
      * Reads all existing *Team*s.
-     * @return MutableSet of all Teams as *TeamDto*s.
+     * @return Set of all Teams as *TeamDto*s.
      */
     fun readAll() : MutableSet<TeamDto> {
         val retDto = mutableSetOf<TeamDto>()

@@ -6,17 +6,15 @@ import javax.persistence.*
 @Entity
 class ModelArtifact(
     @Column(nullable = false)
-    val name: String,
+    var name: String,
 
-    @Column(nullable = false)
-    val kind: String,
+    var kind: String? = null,
 
-    @Column(nullable = false)
-    var location: String,
+    var location: String? = null,
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "microservice_id")
-    var microservice: Microservice,
+    var microservice: Microservice? = null,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +35,8 @@ class ModelArtifact(
                 dto.name = model.name
                 dto.kind = model.kind
                 dto.location = model.location
-                dto.microserviceId = model.microservice.id
+                if(model.microservice != null)
+                    dto.microserviceId = model.microservice!!.id
                 return dto
             } catch (e : Exception) {
                 Microservice.logger.info("An error occurred while transforming to Dto")

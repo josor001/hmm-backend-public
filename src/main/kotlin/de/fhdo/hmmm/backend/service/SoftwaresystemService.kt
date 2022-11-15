@@ -28,19 +28,17 @@ class SoftwaresystemService {
      * Adds a *Microservice* to the system. Microservice must have been persisted, i.e., contains an id.
      * @param systemId Identifier of the *Softwaresystem* that will add the *Microservice*.
      * @param serviceId Identifier of the Microservice that will be added.
-     * @return *SoftwaresystemDto* of the updated *Softwaresystem* with added *Microservice* or *null*
-     * if system or service could not be found by their ids.
+     * @return *SoftwaresystemDto* of the updated *Softwaresystem* with added *Microservice*
+     * @throws NoSuchElementException if system or microservice objects with the given ids cannot be found.
      */
     fun addMicroservice(systemId : Long, serviceId : Long) : SoftwaresystemDto? {
         val foundSystem = systemRepo.findById(systemId)
         val foundService = microserviceRepo.findById(serviceId)
         if(foundSystem.isEmpty) {
-            logger.info("Could not find system with id = $systemId")
-            return null
+            throw NoSuchElementException("No System with id ${systemId} found.")
         }
         if(foundService.isEmpty) {
-            logger.info("Could not find microservice with id = $serviceId")
-            return null
+            throw NoSuchElementException("No Microservice with id ${serviceId} found.")
         }
         foundSystem.get().components.add(foundService.get())
         return Softwaresystem.toDto(systemRepo.save(foundSystem.get()))
@@ -80,7 +78,7 @@ class SoftwaresystemService {
 
     /**
      * Reads all existing *Softwaresystem*s.
-     * @return MutableSet of all *Softwaresystem*s as *SoftwaresystemDto*s.
+     * @return Set of all *Softwaresystem*s as *SoftwaresystemDto*s.
      */
     fun readAll() : MutableSet<SoftwaresystemDto> {
         val retDto = mutableSetOf<SoftwaresystemDto>()

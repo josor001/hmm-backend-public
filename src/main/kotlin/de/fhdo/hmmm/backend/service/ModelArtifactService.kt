@@ -1,6 +1,7 @@
 package de.fhdo.hmmm.backend.service
 
 import de.fhdo.hmmm.backend.dto.ModelArtifactDto
+import de.fhdo.hmmm.backend.model.Microservice
 import de.fhdo.hmmm.backend.model.ModelArtifact
 import de.fhdo.hmmm.backend.repository.MicroserviceRepository
 import de.fhdo.hmmm.backend.repository.ModelArtifactRepository
@@ -28,61 +29,59 @@ class ModelArtifactService {
      * Creates a new *ModelArtifact* based on the given *name*.
      * @return Dto of the newly created artifact.
      */
-    fun create(name : String, kind: String, uri : String, microserviceId : Long) : ModelArtifactDto? {
-        val foundMicroservice = microserviceRepo.findById(microserviceId)
-        if(foundMicroservice.isEmpty)
-            throw NoSuchElementException("No Microservice with id ${microserviceId} found.")
-        val newModelArtifact = modelArtifactRepo.save(ModelArtifact(name, kind, uri, foundMicroservice.get()))
-        return ModelArtifact.toDto(newModelArtifact)
-    }
-    // TODO CONTINUE HERE
-    /**
-     * Reads an existing *Softwaresystem* by its *id*.
-     * @return *SoftwaresystemDto* of the found system else returns null.
-     */
-    fun read(id : Long) : SoftwaresystemDto? {
-        val found = systemRepo.findById(id).orElse(null) ?: return null
-        return Softwaresystem.toDto(found)
+    fun create(name : String) : ModelArtifactDto? {
+        val newService = modelArtifactRepo.save(ModelArtifact(name))
+        return ModelArtifact.toDto(newService)
     }
 
     /**
-     * Reads all existing *Softwaresystem*s.
-     * @return MutableSet of all *Softwaresystem*s as *SoftwaresystemDto*s.
+     * Reads an existing *ModelArtifact* by its *id*.
+     * @return *SoftwareArtifactDto* of the found artifact else returns null.
      */
-    fun readAll() : MutableSet<SoftwaresystemDto> {
-        val retDto = mutableSetOf<SoftwaresystemDto>()
-        systemRepo.findAll().forEach { Softwaresystem.toDto(it)?.let { dto -> retDto.add(dto) } }
+    fun read(id : Long) : ModelArtifactDto? {
+        val found = modelArtifactRepo.findById(id).orElse(null) ?: return null
+        return ModelArtifact.toDto(found)
+    }
+
+    /**
+     * Reads all existing *ModelArtifact*s.
+     * @return Set of all *ModelArtifact*s as *ModelArtifactDto*s.
+     */
+    fun readAll() : MutableSet<ModelArtifactDto> {
+        val retDto = mutableSetOf<ModelArtifactDto>()
+        modelArtifactRepo.findAll().forEach { ModelArtifact.toDto(it)?.let { dto -> retDto.add(dto) } }
         return retDto
     }
 
     /**
-     * Updates an existing *Softwaresystem* by its *SoftwaresystemDto*. Entity must have been persisted, i.e., the dto
-     * must contain an *id*. All fields including the associated components are simply taken from the dto.
+     * Updates an existing *ModelArtifact* by its *ModelArtifactDto*. Entity must have been persisted, i.e., the dto
+     * must contain an *id*.
      * @return A new Dto of the updated instance or null if the update was not successful
      */
-    fun update(system : SoftwaresystemDto) : SoftwaresystemDto? {
-        val found = system.id?.let { systemRepo.findById(it).orElse(null) }
+    fun update(artifact : ModelArtifactDto) : ModelArtifactDto? {
+        val found = artifact.id?.let { modelArtifactRepo.findById(it).orElse(null) }
         if(found != null) {
-            found.name = system.name!!
-            found.components.clear()
-            system.componentIds.forEach {
-                found.components.add(microserviceRepo.findById(it).get())
-            }
-            return Softwaresystem.toDto(systemRepo.save(found))
+            found.name = artifact.name.orEmpty()
+            found.kind = artifact.kind.orEmpty()
+            found.location = artifact.location.orEmpty()
+            if(artifact.microserviceId == null)
+                throw NoSuchElementException("Id is not set in found service. Id is mandatory. Element seems corrupted.")
+            else found.microservice = microserviceRepo.findById(artifact.microserviceId!!).get()
+            return ModelArtifact.toDto(modelArtifactRepo.save(found))
         }
         return null
     }
 
     /**
-     * Deletes an existing *Softwaresystem* by its *id*.
-     * @return Returns true if *id* was found and the system got deleted else returns false.
+     * Deletes an existing *ModelArtifact* by its *id*.
+     * @return Returns true if *id* was found and the artifact got deleted else returns false.
      */
     fun delete(id : Long) : Boolean {
-        if(systemRepo.findById(id).isPresent) {
-            systemRepo.deleteById(id)
+        if(modelArtifactRepo.findById(id).isPresent) {
+            modelArtifactRepo.deleteById(id)
             return true
         } else {
-            logger.debug("Could not find softwaresystem with id = $id")
+            logger.debug("Could not find model artifact with id = $id")
             return false
         }
     }

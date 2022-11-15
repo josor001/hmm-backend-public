@@ -100,7 +100,7 @@ class OrganizationService {
 
     /**
      * Reads all existing organizations.
-     * @return MutableSet of all Organizations as Dtos.
+     * @return Set of all Organizations as Dtos.
      */
     fun readAll() : MutableSet<OrganizationDto> {
         val retDto = mutableSetOf<OrganizationDto>()

@@ -9,7 +9,7 @@ import javax.persistence.*
 class Microservice(
 
     @Column(nullable = false)
-    val name: String,
+    var name: String,
 
     @Column(nullable = true)
     var repositoryLink: String? = null,
