@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
+// This Cross Origin setting can/should be more specified. In this state all external calls are allowed!
+@CrossOrigin
 @RequestMapping("/systems")
 @RestController
 class SoftwaresystemController(val service: SoftwaresystemService) {

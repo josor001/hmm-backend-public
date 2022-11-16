@@ -97,6 +97,7 @@ class SoftwaresystemService {
             found.name = system.name!!
             found.components.clear()
             system.componentIds.forEach {
+                //TODO Check if this works or JPA struggles with OneToMany maintained in Many part.
                 found.components.add(microserviceRepo.findById(it).get())
             }
             return Softwaresystem.toDto(systemRepo.save(found))

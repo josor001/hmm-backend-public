@@ -121,6 +121,7 @@ class OrganizationService {
             found.systemUnderDevelopment = system?.orElse(null)
             found.teams.clear()
             orga.teamIds.forEach {
+                //TODO Check if this works or JPA struggles with OneToMany maintained in Many part.
                 found.teams.add(teamRepo.findById(it).get())
             }
             return Organization.toDto(orgaRepo.save(found))

@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
+// This Cross Origin setting can/should be more specified. In this state all external calls are allowed!
+@CrossOrigin
 @RequestMapping("/microservices")
 @RestController
 class MicroserviceController(val service: MicroserviceService) {
@@ -26,8 +28,8 @@ class MicroserviceController(val service: MicroserviceService) {
     }
 
     @PutMapping("/")
-    private fun updateMicroservice(@RequestBody orga: MicroserviceDto): Mono<MicroserviceDto?>? {
-        return Mono.justOrEmpty(service.update(orga))
+    private fun updateMicroservice(@RequestBody newService: MicroserviceDto): Mono<MicroserviceDto?>? {
+        return Mono.justOrEmpty(service.update(newService))
     }
 
     @PutMapping("/{serviceId}/artifacts/")

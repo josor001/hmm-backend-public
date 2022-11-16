@@ -100,6 +100,7 @@ class TeamService {
             found.name = team.name!!
             found.ownedMicroservices.clear()
             team.ownedMicroserviceIds.forEach {
+                //TODO Check if this works or JPA struggles with OneToMany maintained in Many part.
                 found.ownedMicroservices.add(microserviceRepo.findById(it).get())
             }
             return Team.toDto(teamRepo.save(found))

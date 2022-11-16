@@ -102,9 +102,14 @@ class MicroserviceService {
         val found = service.id?.let { microserviceRepo.findById(it).orElse(null) }
         if(found != null) {
             found.name = service.name!!
+            found.repositoryLink = service.repositoryLink
             found.models.clear()
             service.modelIds.forEach {
-                found.models.add(modelArtifactRepo.findById(it).get())
+                // due to JPA the ref is maintained in the One-part of ManyToOne.
+                // I.e. in this case it is necessary to update each artifact.
+                val artifact = modelArtifactRepo.findById(it).get()
+                artifact.microservice = found
+                modelArtifactRepo.save(artifact)
             }
             return Microservice.toDto(microserviceRepo.save(found))
         }
