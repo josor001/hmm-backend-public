@@ -2,6 +2,7 @@ package de.fhdo.hmmm.backend.model
 
 import de.fhdo.hmmm.backend.dto.ModelArtifactDto
 import de.fhdo.hmmm.backend.dto.OrganizationDto
+import org.slf4j.LoggerFactory
 import javax.persistence.*
 
 @Entity
@@ -29,6 +30,7 @@ class Organization(
     }
 
     companion object {
+        val logger = LoggerFactory.getLogger(Organization::class.java)
         fun toDto(orga: Organization) : OrganizationDto? {
             try {
                 var dto = OrganizationDto()
@@ -38,7 +40,7 @@ class Organization(
                 orga.teams.forEach { it.id?.let { id -> dto.teamIds.add(id) } }
                 return dto
             } catch (e : Exception) {
-                Microservice.logger.info("An error occurred while transforming to Dto")
+                logger.info("An error occurred while transforming to Dto")
                 e.printStackTrace()
                 return null
             }

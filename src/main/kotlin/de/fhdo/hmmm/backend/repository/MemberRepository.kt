@@ -1,4 +1,7 @@
 package de.fhdo.hmmm.backend.repository
 
-interface MemberRepository {
+import de.fhdo.hmmm.backend.model.Member
+import org.springframework.data.jpa.repository.JpaRepository
+
+interface MemberRepository : JpaRepository<Member, Long> {
 }

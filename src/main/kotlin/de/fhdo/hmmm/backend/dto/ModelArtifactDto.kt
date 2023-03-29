@@ -1,6 +1,5 @@
 package de.fhdo.hmmm.backend.dto
 
-import de.fhdo.hmmm.backend.model.ModelKind
 import java.io.Serializable
 
 data class ModelArtifactDto(

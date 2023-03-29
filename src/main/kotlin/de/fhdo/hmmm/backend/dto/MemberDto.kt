@@ -1,4 +1,11 @@
 package de.fhdo.hmmm.backend.dto
 
-class MemberDto {
-}
+import java.io.Serializable
+
+data class MemberDto(
+    var firstname: String? = null,
+    var lastname: String? = null,
+    var email: String? = null,
+    var profileLink: String? = null,
+    var id: Long? = null
+) : Serializable

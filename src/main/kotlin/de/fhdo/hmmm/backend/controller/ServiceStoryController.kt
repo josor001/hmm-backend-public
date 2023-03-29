@@ -7,11 +7,14 @@ import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-// This Cross Origin setting can/should be more specified. In this state all external calls are allowed!
+//TODO completely everything
+//TODO check what to do with ServiceStoryEdges? separate controller?
+
+//This Cross Origin setting can/should be more specified. In this state all external calls are allowed!
 @CrossOrigin
 @RequestMapping("/microservices")
 @RestController
-class MicroserviceController(val service: MicroserviceService) {
+class ServiceStoryController(val service: MicroserviceService) {
     @GetMapping("/{id}")
     private fun getMicroserviceById(@PathVariable id: Long): Mono<MicroserviceDto?> {
         return Mono.justOrEmpty(service.read(id))
