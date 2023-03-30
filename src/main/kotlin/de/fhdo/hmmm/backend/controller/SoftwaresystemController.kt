@@ -1,7 +1,6 @@
 package de.fhdo.hmmm.backend.controller
 
 import de.fhdo.hmmm.backend.dto.SoftwaresystemDto
-import de.fhdo.hmmm.backend.dto.TeamDto
 import de.fhdo.hmmm.backend.service.SoftwaresystemService
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
@@ -11,7 +10,6 @@ import reactor.core.publisher.Mono
 @CrossOrigin
 @RequestMapping("/systems")
 @RestController
-//TODO
 class SoftwaresystemController(val service: SoftwaresystemService) {
     @GetMapping("/{id}")
     private fun getSoftwaresystemById(@PathVariable id: Long): Mono<SoftwaresystemDto?> {
@@ -24,13 +22,13 @@ class SoftwaresystemController(val service: SoftwaresystemService) {
     }
 
     @PostMapping("")
-    private fun createTeam(@RequestBody name: String): Mono<SoftwaresystemDto?>? {
+    private fun createSystem(@RequestBody name: String): Mono<SoftwaresystemDto?>? {
         return Mono.justOrEmpty(service.create(name))
     }
 
     @PutMapping("/")
-    private fun updateTeam(@RequestBody system: SoftwaresystemDto): Mono<SoftwaresystemDto?>? {
-        return Mono.justOrEmpty(service.update(system))
+    private fun updateSystem(@RequestBody updatedSystem: SoftwaresystemDto): Mono<SoftwaresystemDto?>? {
+        return Mono.justOrEmpty(service.update(updatedSystem))
     }
 
     @PutMapping("/{id}/microservices/")
@@ -39,12 +37,22 @@ class SoftwaresystemController(val service: SoftwaresystemService) {
     }
 
     @DeleteMapping("/{id}/microservices/{serviceId}")
-    private fun deleteMicroserviceFromTeamById(@PathVariable id: Long, @PathVariable serviceId: Long): Mono<Boolean?> {
+    private fun deleteMicroserviceFromSystemById(@PathVariable id: Long, @PathVariable serviceId: Long): Mono<Boolean?> {
         return Mono.justOrEmpty(service.removeMicroservice(id, serviceId))
     }
 
+    @PutMapping("/{id}/stories/")
+    private fun addStory(@PathVariable id: Long, @RequestBody storyId: Long): Mono<SoftwaresystemDto?>? {
+        return Mono.justOrEmpty(service.addServiceStory(id, storyId))
+    }
+
+    @DeleteMapping("/{id}/stories/{storyId}")
+    private fun deleteStoryFromSystemById(@PathVariable id: Long, @PathVariable storyId: Long): Mono<Boolean?> {
+        return Mono.justOrEmpty(service.removeServiceStory(id, storyId))
+    }
+
     @DeleteMapping("/{id}")
-    private fun deleteTeamById(@PathVariable id: Long): Mono<Boolean?> {
+    private fun deleteSystemById(@PathVariable id: Long): Mono<Boolean?> {
         return Mono.justOrEmpty(service.delete(id))
     }
 

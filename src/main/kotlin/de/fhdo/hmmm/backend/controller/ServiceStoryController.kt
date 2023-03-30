@@ -1,52 +1,58 @@
 package de.fhdo.hmmm.backend.controller
 
-import de.fhdo.hmmm.backend.dto.MicroserviceDto
-import de.fhdo.hmmm.backend.dto.OrganizationDto
-import de.fhdo.hmmm.backend.service.MicroserviceService
+import de.fhdo.hmmm.backend.dto.ServiceStoryDto
+import de.fhdo.hmmm.backend.service.ServiceStoryService
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-//TODO completely everything
-//TODO check what to do with ServiceStoryEdges? separate controller?
-
 //This Cross Origin setting can/should be more specified. In this state all external calls are allowed!
 @CrossOrigin
-@RequestMapping("/microservices")
+@RequestMapping("/stories")
 @RestController
-class ServiceStoryController(val service: MicroserviceService) {
+class ServiceStoryController(val storyService: ServiceStoryService) {
     @GetMapping("/{id}")
-    private fun getMicroserviceById(@PathVariable id: Long): Mono<MicroserviceDto?> {
-        return Mono.justOrEmpty(service.read(id))
+    private fun getStoryById(@PathVariable id: Long): Mono<ServiceStoryDto?> {
+        return Mono.justOrEmpty(storyService.read(id))
     }
 
     @GetMapping("")
-    private fun getAllMicroservices(): Flux<MicroserviceDto> {
-        return Flux.fromIterable(service.readAll())
+    private fun getAllStories(): Flux<ServiceStoryDto> {
+        return Flux.fromIterable(storyService.readAll())
     }
 
     @PostMapping("")
-    private fun createMicroservice(@RequestBody name: String): Mono<MicroserviceDto?>? {
-        return Mono.justOrEmpty(service.create(name))
+    private fun createStory(@RequestBody name: String): Mono<ServiceStoryDto?>? {
+        return Mono.justOrEmpty(storyService.create(name))
     }
 
     @PutMapping("/")
-    private fun updateMicroservice(@RequestBody newService: MicroserviceDto): Mono<MicroserviceDto?>? {
-        return Mono.justOrEmpty(service.update(newService))
+    private fun updateStory(@RequestBody updatedStory: ServiceStoryDto): Mono<ServiceStoryDto?>? {
+        return Mono.justOrEmpty(storyService.update(updatedStory))
     }
 
-    @PutMapping("/{serviceId}/artifacts/")
-    private fun addModelArtifact(@PathVariable serviceId: Long, @RequestBody artifactId: Long): Mono<MicroserviceDto?>? {
-        return Mono.justOrEmpty(service.addModelArtifact(serviceId, artifactId))
+    @PutMapping("/{storyId}/vertices/")
+    private fun addVertex(@PathVariable storyId: Long, @RequestBody vertexId: Long): Mono<ServiceStoryDto?>? {
+        return Mono.justOrEmpty(storyService.addVertice(storyId, vertexId))
     }
 
-    @DeleteMapping("/{serviceId}/artifacts/{artifactId}")
-    private fun removeModelArtifactsById(@PathVariable serviceId: Long, @PathVariable artifactId: Long): Mono<Boolean?> {
-        return Mono.justOrEmpty(service.removeModelArtifact(serviceId, artifactId))
+    @DeleteMapping("/{storyId}/vertices/{vertexId}")
+    private fun removeVertexFromStoryById(@PathVariable storyId: Long, @PathVariable vertexId: Long): Mono<Boolean?> {
+        return Mono.justOrEmpty(storyService.removeVertex(storyId, vertexId))
+    }
+
+    @PutMapping("/{storyId}/vertices/")
+    private fun addEdge(@PathVariable storyId: Long, @RequestBody edgeId: Long): Mono<ServiceStoryDto?>? {
+        return Mono.justOrEmpty(storyService.addEdge(storyId, edgeId))
+    }
+
+    @DeleteMapping("/{storyId}/vertices/{edgeId}")
+    private fun removeEdgeFromStoryById(@PathVariable storyId: Long, @PathVariable edgeId: Long): Mono<Boolean?> {
+        return Mono.justOrEmpty(storyService.removeEdge(storyId, edgeId))
     }
 
     @DeleteMapping("/{id}")
-    private fun deleteMicroserviceById(@PathVariable id: Long): Mono<Boolean?> {
-        return Mono.justOrEmpty(service.delete(id))
+    private fun deleteStoryById(@PathVariable id: Long): Mono<Boolean?> {
+        return Mono.justOrEmpty(storyService.delete(id))
     }
 }

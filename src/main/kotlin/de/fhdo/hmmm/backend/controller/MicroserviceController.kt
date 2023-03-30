@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
+//TODO Error Handling for ALL controllers.
+// see https://www.baeldung.com/spring-webflux-errors  (probably .onError() method?! maybe global?)
+
 // This Cross Origin setting can/should be more specified. In this state all external calls are allowed!
 @CrossOrigin
 @RequestMapping("/microservices")

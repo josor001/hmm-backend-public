@@ -5,7 +5,6 @@ import de.fhdo.hmmm.backend.service.TeamService
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-//TODO (check)
 
 // This Cross Origin setting can/should be more specified. In this state all external calls are allowed!
 @CrossOrigin

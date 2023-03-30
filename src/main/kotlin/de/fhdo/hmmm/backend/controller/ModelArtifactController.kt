@@ -1,8 +1,6 @@
 package de.fhdo.hmmm.backend.controller
 
-import de.fhdo.hmmm.backend.dto.MicroserviceDto
 import de.fhdo.hmmm.backend.dto.ModelArtifactDto
-import de.fhdo.hmmm.backend.model.ModelArtifact
 import de.fhdo.hmmm.backend.service.ModelArtifactService
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux

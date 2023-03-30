@@ -79,7 +79,6 @@ class ServiceStoryService {
      * @throws NoSuchElementException if story or microservice objects with the given ids cannot be found.
      */
     fun addEdge(storyId : Long, edgeId : Long) : ServiceStoryDto? {
-        //TODO hier sollte noch geprüft werden, ob die Knoten der Kante bereits der Story hinzugefügt sind!
         val foundStory = storyRepo.findById(storyId)
         val foundEdge = storyEdgeRepo.findById(edgeId)
         if(foundStory.isEmpty) {
@@ -87,6 +86,9 @@ class ServiceStoryService {
         }
         if(foundEdge.isEmpty) {
             throw NoSuchElementException("No ServiceStoryEdge with id ${edgeId} found.")
+        }
+        if(!foundStory.get().vertices.containsAll(setOf(foundEdge.get().source, foundEdge.get().target))) {
+            throw NoSuchElementException("vertices list of story must contain source and target of edge beforehand!")
         }
         foundStory.get().directedEdges.add(foundEdge.get())
         return ServiceStory.toDto(storyRepo.save(foundStory.get()))
@@ -117,7 +119,7 @@ class ServiceStoryService {
 
     /**
      * Creates a new *ServiceStory* based on the given *name*.
-     * @return Dto of the newly created team.
+     * @return Dto of the newly created ServiceStory.
      */
     fun create(name : String) : ServiceStoryDto? {
         val newStory = storyRepo.save(ServiceStory(name))

@@ -1,7 +1,6 @@
 package de.fhdo.hmmm.backend.controller
 
 import de.fhdo.hmmm.backend.dto.OrganizationDto
-import de.fhdo.hmmm.backend.dto.SoftwaresystemDto
 import de.fhdo.hmmm.backend.service.OrganizationService
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
