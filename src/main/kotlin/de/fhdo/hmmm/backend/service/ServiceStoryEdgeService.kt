@@ -32,16 +32,17 @@ class ServiceStoryEdgeService {
      * @return *ServiceStoryEdgeDto* Dto of the newly created ServiceStoryEdge.
      */
     fun create(sourceId : Long, targetId : Long) : ServiceStoryEdgeDto? {
-        val foundSource = serviceRepo.findById(sourceId)
-        val foundTarget = serviceRepo.findById(targetId)
-        if(foundSource.isEmpty) {
-            throw NoSuchElementException("No Microservice with id ${sourceId} as source found.")
+        try {
+            val foundSource = serviceRepo.findById(sourceId).orElseThrow()
+            val foundTarget = serviceRepo.findById(targetId).orElseThrow()
+            //val newEdge = edgeRepo.save(ServiceStoryEdge(foundSource, foundTarget))
+            val newEdge = edgeRepo.save(ServiceStoryEdge(sourceId, targetId))
+            return ServiceStoryEdge.toDto(newEdge)
+        } catch (nsee : NoSuchElementException) {
+            logger.debug("Could not find source with id $sourceId or target with id $targetId.")
+            nsee.printStackTrace()
+            return null
         }
-        if(foundTarget.isEmpty) {
-            throw NoSuchElementException("No Microservice with id ${targetId} as target found.")
-        }
-        val newEdge = edgeRepo.save(ServiceStoryEdge(foundSource.get(), foundTarget.get()))
-        return ServiceStoryEdge.toDto(newEdge)
     }
 
     /**
@@ -62,11 +63,10 @@ class ServiceStoryEdgeService {
         val found = edge.id?.let { edgeRepo.findById(it).orElse(null) }
         if(found != null) {
             found.description = edge.description
-            val source = edge.sourceId?.let { serviceRepo.findById(it) }
-            val target = edge.targetId?.let { serviceRepo.findById(it) }
-            found.source = source?.orElseThrow()
-            found.target = target?.orElseThrow()
-
+            if(!(serviceRepo.existsById(edge.sourceId!!) && serviceRepo.existsById(edge.targetId!!)))
+                return null
+            found.source = edge.sourceId
+            found.target = edge.targetId
             return ServiceStoryEdge.toDto(edgeRepo.save(found))
         }
         return null

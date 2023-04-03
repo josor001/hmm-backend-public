@@ -14,8 +14,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ServiceTests {
-    private val logger = LoggerFactory.getLogger(ServiceTests::class.java)
+class ServiceOrganizationTests {
+    private val logger = LoggerFactory.getLogger(ServiceOrganizationTests::class.java)
 
     @Autowired
     lateinit var orgaService: OrganizationService
@@ -36,6 +36,13 @@ class ServiceTests {
         assertNotNull(orgaRepo.findById(org.id!!))
         assertTrue(orgaService.delete(org.id!!))
         assertTrue(orgaRepo.findById(org.id!!).isEmpty)
+    }
+
+    @Test
+    fun createThroughService() {
+        val orgaDto = orgaService.create("MyTestOrg")
+        assertNotNull(orgaDto)
+        logger.info("Created $orgaDto.")
     }
 
     @Test

@@ -41,12 +41,12 @@ class ServiceStoryController(val storyService: ServiceStoryService) {
         return Mono.justOrEmpty(storyService.removeVertex(storyId, vertexId))
     }
 
-    @PutMapping("/{storyId}/vertices/")
+    @PutMapping("/{storyId}/edges/")
     private fun addEdge(@PathVariable storyId: Long, @RequestBody edgeId: Long): Mono<ServiceStoryDto?>? {
         return Mono.justOrEmpty(storyService.addEdge(storyId, edgeId))
     }
 
-    @DeleteMapping("/{storyId}/vertices/{edgeId}")
+    @DeleteMapping("/{storyId}/edges/{edgeId}")
     private fun removeEdgeFromStoryById(@PathVariable storyId: Long, @PathVariable edgeId: Long): Mono<Boolean?> {
         return Mono.justOrEmpty(storyService.removeEdge(storyId, edgeId))
     }

@@ -11,6 +11,7 @@ class Organization(
     var name: String,
 
     //owning side
+    //TODO CHECK THIS, GAVE SOME TROUBLE IN ServiceStoryEdge Testing, thus I moved to only using IDs for the microservices at edge class
     @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, optional = true)
     var systemUnderDevelopment: Softwaresystem? = null,
 

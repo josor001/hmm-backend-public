@@ -87,7 +87,7 @@ class ServiceStoryService {
         if(foundEdge.isEmpty) {
             throw NoSuchElementException("No ServiceStoryEdge with id ${edgeId} found.")
         }
-        if(!foundStory.get().vertices.containsAll(setOf(foundEdge.get().source, foundEdge.get().target))) {
+        if(!foundStory.get().vertices.map { it.id }.containsAll(setOf(foundEdge.get().source, foundEdge.get().target))) {
             throw NoSuchElementException("vertices list of story must contain source and target of edge beforehand!")
         }
         foundStory.get().directedEdges.add(foundEdge.get())
