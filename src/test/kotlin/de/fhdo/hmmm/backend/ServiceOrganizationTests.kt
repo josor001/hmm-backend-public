@@ -3,6 +3,7 @@ package de.fhdo.hmmm.backend
 import de.fhdo.hmmm.backend.model.Organization
 import de.fhdo.hmmm.backend.repository.OrganizationRepository
 import de.fhdo.hmmm.backend.service.OrganizationService
+import org.apache.commons.lang3.RandomStringUtils
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -54,6 +55,19 @@ class ServiceOrganizationTests {
         val dto = Organization.toDto(org)
         logger.info(dto.toString())
         assertEquals(dto!!.name, org.name)
+    }
+    @Test
+    fun createOrganizationThroughServiceAndUpdate() {
+        val orgaDto = orgaService.create("MyTestOrg")
+        assertNotNull(orgaDto)
+        logger.info("Created $orgaDto.")
+        assertNotNull(orgaRepo.findById(orgaDto!!.id!!))
+        //set random 5 character name for dto
+        val randomName = RandomStringUtils.randomAlphanumeric(5)
+        orgaDto.name = randomName
+        val newOrgaDto = orgaService.update(orgaDto)
+        assertEquals(orgaRepo.findById(newOrgaDto!!.id!!).get().name, randomName)
+        logger.info("Updated Dto to $newOrgaDto.")
     }
 }
 

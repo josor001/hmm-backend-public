@@ -33,6 +33,12 @@ class OrganizationControllerTests(@Autowired val client: WebTestClient) {
     lateinit var softwaresystemService: SoftwaresystemService
     @MockkBean
     lateinit var teamService: TeamService
+    @MockkBean
+    lateinit var storyService: ServiceStoryService
+    @MockkBean
+    lateinit var edgeService: ServiceStoryEdgeService
+    @MockkBean
+    lateinit var memberService: MemberService
 
     val mapper = jacksonObjectMapper()
     val testOrga = OrganizationDto("NewOrg" )

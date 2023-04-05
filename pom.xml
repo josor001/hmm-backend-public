@@ -23,11 +23,22 @@
         </repository>
     </distributionManagement>
 
+    <!-- other private repos -->
     <repositories>
         <repository>
             <id>github-visualizer</id>
-            <name>GitHub josor001 Apache Maven Packages for Visualizer</name>
+            <name>GitHub josor001 Apache Maven Packages for HMM Model Visualizer</name>
             <url>https://maven.pkg.github.com/josor001/mmv</url>
+        </repository>
+        <repository>
+            <id>github-core</id>
+            <name>GitHub josor001 Apache Maven Packages for HMM Model Core</name>
+            <url>https://maven.pkg.github.com/josor001/mmc</url>
+        </repository>
+        <repository>
+            <id>github-merger</id>
+            <name>GitHub josor001 Apache Maven Packages for Model Merger</name>
+            <url>https://maven.pkg.github.com/josor001/mmm</url>
         </repository>
     </repositories>
 
