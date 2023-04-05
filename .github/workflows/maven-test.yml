@@ -27,8 +27,15 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: maven
+    - name: maven-settings
+      uses: s4u/maven-settings-action@v2
+      with:
+        servers: '[{"id": "github", "username": "dummy", "password": "${GITHUB_TOKEN_REF}"}]'
+        githubServer: false        
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+      env:
+        GITHUB_TOKEN_REF: ${{ secrets.GH_PAT_FOR_ACTIONS_TOKEN }}
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
