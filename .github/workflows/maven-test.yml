@@ -30,7 +30,7 @@ jobs:
     - name: maven-settings
       uses: s4u/maven-settings-action@v2
       with:
-        servers: '[{"id": "github", "username": "dummy", "password": "${GITHUB_TOKEN_REF}"}]'
+        servers: '[{"id": "github-visualizer", "username": "dummy", "password": "${GITHUB_TOKEN_REF}"}]'
         githubServer: false        
     - name: Build with Maven
       run: mvn -B package --file pom.xml
