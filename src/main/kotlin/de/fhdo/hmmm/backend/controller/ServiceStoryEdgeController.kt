@@ -20,7 +20,7 @@ class ServiceStoryEdgeController(val edgeService: ServiceStoryEdgeService) {
         return Mono.justOrEmpty(edgeService.create(sourceId, targetId))
     }
 
-    @PutMapping("/")
+    @PutMapping("")
     private fun updateEdge(@RequestBody updatedEdge: ServiceStoryEdgeDto): Mono<ServiceStoryEdgeDto?>? {
         return Mono.justOrEmpty(edgeService.update(updatedEdge))
     }

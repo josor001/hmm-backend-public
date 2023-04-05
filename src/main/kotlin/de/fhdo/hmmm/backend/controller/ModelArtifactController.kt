@@ -26,7 +26,7 @@ class ModelArtifactController(val service: ModelArtifactService) {
         return Mono.justOrEmpty(service.create(name, ))
     }
 
-    @PutMapping("/")
+    @PutMapping("")
     private fun updateModelArtifact(@RequestBody orga: ModelArtifactDto): Mono<ModelArtifactDto?>? {
         return Mono.justOrEmpty(service.update(orga))
     }

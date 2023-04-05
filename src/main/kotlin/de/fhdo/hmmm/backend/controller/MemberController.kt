@@ -29,7 +29,7 @@ class MemberController(val service: MemberService) {
         return Mono.justOrEmpty(service.create(firstname, lastname, email))
     }
 
-    @PutMapping("/")
+    @PutMapping("")
     private fun updateMember(@RequestBody member: MemberDto): Mono<MemberDto?>? {
         return Mono.justOrEmpty(service.update(member))
     }
@@ -38,12 +38,4 @@ class MemberController(val service: MemberService) {
     private fun deleteMemberById(@PathVariable id: Long): Mono<Boolean?> {
         return Mono.justOrEmpty(service.delete(id))
     }
-
-    /**
-    GET - /users - Returns a list of users
-    GET - users/100 - Returns a specific user
-    POST - /users - Create a new user
-    PUT - /users/ - Updates a specific user
-    DELETE - /users/711 - Deletes a specific user
-    */
 }

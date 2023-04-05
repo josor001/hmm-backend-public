@@ -26,12 +26,12 @@ class ServiceStoryController(val storyService: ServiceStoryService) {
         return Mono.justOrEmpty(storyService.create(name))
     }
 
-    @PutMapping("/")
+    @PutMapping("")
     private fun updateStory(@RequestBody updatedStory: ServiceStoryDto): Mono<ServiceStoryDto?>? {
         return Mono.justOrEmpty(storyService.update(updatedStory))
     }
 
-    @PutMapping("/{storyId}/vertices/")
+    @PutMapping("/{storyId}/vertices")
     private fun addVertex(@PathVariable storyId: Long, @RequestBody vertexId: Long): Mono<ServiceStoryDto?>? {
         return Mono.justOrEmpty(storyService.addVertice(storyId, vertexId))
     }
@@ -41,7 +41,7 @@ class ServiceStoryController(val storyService: ServiceStoryService) {
         return Mono.justOrEmpty(storyService.removeVertex(storyId, vertexId))
     }
 
-    @PutMapping("/{storyId}/edges/")
+    @PutMapping("/{storyId}/edges")
     private fun addEdge(@PathVariable storyId: Long, @RequestBody edgeId: Long): Mono<ServiceStoryDto?>? {
         return Mono.justOrEmpty(storyService.addEdge(storyId, edgeId))
     }

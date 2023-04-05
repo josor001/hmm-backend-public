@@ -26,12 +26,12 @@ class SoftwaresystemController(val service: SoftwaresystemService) {
         return Mono.justOrEmpty(service.create(name))
     }
 
-    @PutMapping("/")
+    @PutMapping("")
     private fun updateSystem(@RequestBody updatedSystem: SoftwaresystemDto): Mono<SoftwaresystemDto?>? {
         return Mono.justOrEmpty(service.update(updatedSystem))
     }
 
-    @PutMapping("/{id}/microservices/")
+    @PutMapping("/{id}/microservices")
     private fun addMicroservice(@PathVariable id: Long, @RequestBody serviceId: Long): Mono<SoftwaresystemDto?>? {
         return Mono.justOrEmpty(service.addMicroservice(id, serviceId))
     }
@@ -41,7 +41,7 @@ class SoftwaresystemController(val service: SoftwaresystemService) {
         return Mono.justOrEmpty(service.removeMicroservice(id, serviceId))
     }
 
-    @PutMapping("/{id}/stories/")
+    @PutMapping("/{id}/stories")
     private fun addStory(@PathVariable id: Long, @RequestBody storyId: Long): Mono<SoftwaresystemDto?>? {
         return Mono.justOrEmpty(service.addServiceStory(id, storyId))
     }
@@ -55,5 +55,4 @@ class SoftwaresystemController(val service: SoftwaresystemService) {
     private fun deleteSystemById(@PathVariable id: Long): Mono<Boolean?> {
         return Mono.justOrEmpty(service.delete(id))
     }
-
 }

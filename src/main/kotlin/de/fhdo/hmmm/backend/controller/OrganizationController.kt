@@ -26,12 +26,12 @@ class OrganizationController(val service: OrganizationService) {
         return Mono.justOrEmpty(service.create(name))
     }
 
-    @PutMapping("/")
+    @PutMapping("")
     private fun updateOrganization(@RequestBody orga: OrganizationDto): Mono<OrganizationDto?>? {
         return Mono.justOrEmpty(service.update(orga))
     }
 
-    @PutMapping("/{orgaId}/teams/")
+    @PutMapping("/{orgaId}/teams")
     private fun addTeam(@PathVariable orgaId: Long, @RequestBody teamId: Long): Mono<OrganizationDto?>? {
         return Mono.justOrEmpty(service.addTeam(orgaId, teamId))
     }

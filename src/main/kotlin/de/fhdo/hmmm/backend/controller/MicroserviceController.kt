@@ -30,12 +30,12 @@ class MicroserviceController(val service: MicroserviceService) {
         return Mono.justOrEmpty(service.create(name))
     }
 
-    @PutMapping("/")
+    @PutMapping("")
     private fun updateMicroservice(@RequestBody newService: MicroserviceDto): Mono<MicroserviceDto?>? {
         return Mono.justOrEmpty(service.update(newService))
     }
 
-    @PutMapping("/{serviceId}/artifacts/")
+    @PutMapping("/{serviceId}/artifacts")
     private fun addModelArtifact(@PathVariable serviceId: Long, @RequestBody artifactId: Long): Mono<MicroserviceDto?>? {
         return Mono.justOrEmpty(service.addModelArtifact(serviceId, artifactId))
     }

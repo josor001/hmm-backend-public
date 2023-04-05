@@ -27,12 +27,12 @@ class TeamController(val service: TeamService) {
         return Mono.justOrEmpty(service.create(name))
     }
 
-    @PutMapping("/")
+    @PutMapping("")
     private fun updateTeam(@RequestBody team: TeamDto): Mono<TeamDto?>? {
         return Mono.justOrEmpty(service.update(team))
     }
 
-    @PutMapping("/{id}/microservices/")
+    @PutMapping("/{id}/microservices")
     private fun addMicroservice(@PathVariable id: Long, @RequestBody serviceId: Long): Mono<TeamDto?>? {
         return Mono.justOrEmpty(service.addMicroservice(id, serviceId))
     }
@@ -46,12 +46,4 @@ class TeamController(val service: TeamService) {
     private fun deleteTeamById(@PathVariable id: Long): Mono<Boolean?> {
         return Mono.justOrEmpty(service.delete(id))
     }
-
-    /**
-    GET - /users - Returns a list of users
-    GET - users/100 - Returns a specific user
-    POST - /users - Create a new user
-    PUT - /users/ - Updates a specific user
-    DELETE - /users/711 - Deletes a specific user
-    */
 }
