@@ -13,6 +13,24 @@
     <version>0.2</version>
     <name>Microservice Model Management Backend</name>
     <description>Microservice Model Management Backend</description>
+
+    <!-- publication in private repo through GitHub Packages -->
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub josor001 Apache Maven Packages for Backend</name>
+            <url>https://maven.pkg.github.com/josor001/hmmm-backend</url>
+        </repository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>github-visualizer</id>
+            <name>GitHub josor001 Apache Maven Packages for Visualizer</name>
+            <url>https://maven.pkg.github.com/josor001/mmv</url>
+        </repository>
+    </repositories>
+
     <properties>
         <java.version>11</java.version>
         <kotlin.version>1.6.21</kotlin.version>
@@ -101,15 +119,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <!-- publication in private repo through GitHub Packages -->
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>GitHub josor001 Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/josor001/hmmm-backend</url>
-        </repository>
-    </distributionManagement>
 
     <build>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>

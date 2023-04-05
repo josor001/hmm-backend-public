@@ -3,6 +3,7 @@ package de.fhdo.hmmm.backend.model
 import de.fhdo.hmmm.backend.dto.MemberDto
 import de.fhdo.hmmm.backend.dto.SoftwaresystemDto
 import de.fhdo.hmmm.backend.dto.TeamDto
+import org.slf4j.LoggerFactory
 import java.net.URL
 import javax.persistence.*
 
@@ -18,7 +19,7 @@ class Member(
     var email: String,
 
     @Column(nullable = true)
-    var profileLink: String,
+    var profileLink: String? = null,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +35,7 @@ class Member(
     }
 
     companion object {
+        val logger = LoggerFactory.getLogger(Member::class.java)
         fun toDto(member: Member) : MemberDto? {
             try {
                 var dto = MemberDto()
@@ -44,7 +46,7 @@ class Member(
                 dto.profileLink = member.profileLink
                 return dto
             } catch (e : Exception) {
-                Microservice.logger.info("An error occurred while transforming to Dto")
+                logger.info("An error occurred while transforming to Dto")
                 e.printStackTrace()
                 return null
             }

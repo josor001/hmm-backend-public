@@ -43,8 +43,8 @@ class ServiceStory(
                 dto.id = story.id
                 dto.name = story.name
                 dto.description = story.description
-                story.vertices.forEach { it.id?.let { id -> dto.verticesIds.add(id) } }
-                story.directedEdges.forEach { it.id?.let { id -> dto.directedEdgesIds.add(id) } }
+                story.vertices.forEach { it.id?.let { id -> dto.vertexIds.add(id) } }
+                story.directedEdges.forEach { it.id?.let { id -> dto.directedEdgeIds.add(id) } }
                 return dto
             } catch (e : Exception) {
                 logger.info("An error occurred while transforming to Dto")

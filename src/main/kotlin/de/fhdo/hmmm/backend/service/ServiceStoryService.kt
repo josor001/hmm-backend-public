@@ -156,13 +156,13 @@ class ServiceStoryService {
             found.name = story.name!!
             found.description = story.description
             found.directedEdges.clear()
-            story.directedEdgesIds.forEach {
+            story.directedEdgeIds.forEach {
                 //TODO Check if this works or JPA struggles with OneToMany maintained in Many part.
                 found.directedEdges.add(storyEdgeRepo.findById(it).get())
             }
 
             found.vertices.clear()
-            story.verticesIds.forEach {
+            story.vertexIds.forEach {
                 //TODO Check if this works or JPA struggles with OneToMany maintained in Many part.
                 found.vertices.add(vertexRepo.findById(it).get())
             }
