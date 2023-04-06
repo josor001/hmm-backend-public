@@ -1,5 +1,6 @@
 package de.fhdo.hmmm.backend.controller
 
+import de.fhdo.hmmm.backend.dto.MemberCreateDto
 import de.fhdo.hmmm.backend.dto.MemberDto
 import de.fhdo.hmmm.backend.service.MemberService
 import org.springframework.web.bind.annotation.*
@@ -23,10 +24,8 @@ class MemberController(val service: MemberService) {
     }
 
     @PostMapping("")
-    private fun createMember(@RequestBody firstname: String,
-                             @RequestBody lastname: String,
-                             @RequestBody email: String): Mono<MemberDto?>? {
-        return Mono.justOrEmpty(service.create(firstname, lastname, email))
+    private fun createMember(@RequestBody newMember: MemberCreateDto): Mono<MemberDto?>? {
+        return Mono.justOrEmpty(service.create(newMember.firstname, newMember.lastname, newMember.email))
     }
 
     @PutMapping("")

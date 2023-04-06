@@ -1,5 +1,6 @@
 package de.fhdo.hmmm.backend.controller
 
+import de.fhdo.hmmm.backend.dto.ServiceStoryEdgeCreateDto
 import de.fhdo.hmmm.backend.dto.ServiceStoryEdgeDto
 import de.fhdo.hmmm.backend.service.ServiceStoryEdgeService
 import org.springframework.web.bind.annotation.*
@@ -16,8 +17,8 @@ class ServiceStoryEdgeController(val edgeService: ServiceStoryEdgeService) {
     }
 
     @PostMapping("")
-    private fun createEdge(@RequestBody sourceId: Long, @RequestBody targetId: Long): Mono<ServiceStoryEdgeDto?>? {
-        return Mono.justOrEmpty(edgeService.create(sourceId, targetId))
+    private fun createEdge(@RequestBody createDto : ServiceStoryEdgeCreateDto): Mono<ServiceStoryEdgeDto?>? {
+        return Mono.justOrEmpty(edgeService.create(createDto.sourceId, createDto.targetId))
     }
 
     @PutMapping("")
