@@ -23,7 +23,7 @@ class ModelArtifactController(val service: ModelArtifactService) {
 
     @PostMapping("")
     private fun createModelArtifact(@RequestBody name: String): Mono<ModelArtifactDto?>? {
-        return Mono.justOrEmpty(service.create(name, ))
+        return Mono.justOrEmpty(service.create(name))
     }
 
     @PutMapping("")

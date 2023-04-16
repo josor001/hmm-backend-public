@@ -21,6 +21,10 @@ class Member(
     @Column(nullable = true)
     var profileLink: String? = null,
 
+    @ElementCollection
+    @Column(nullable = false)
+    var expertise: MutableList<String> = mutableListOf(),
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
@@ -31,6 +35,7 @@ class Member(
                 "lastname='$lastname', " +
                 "email='$email', " +
                 "profileLink='$profileLink', " +
+                "expertise=${expertise.joinToString(prefix = "[", postfix = "]", separator= ",")}, " +
                 "id=$id)"
     }
 
@@ -44,6 +49,7 @@ class Member(
                 dto.lastname = member.lastname
                 dto.email = member.email
                 dto.profileLink = member.profileLink
+                dto.expertise.addAll(member.expertise)
                 return dto
             } catch (e : Exception) {
                 logger.info("An error occurred while transforming to Dto")

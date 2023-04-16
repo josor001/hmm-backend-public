@@ -2,6 +2,7 @@ package de.fhdo.hmmm.backend.service
 
 import de.fhdo.hmmm.backend.dto.MicroserviceDto
 import de.fhdo.hmmm.backend.model.Microservice
+import de.fhdo.hmmm.backend.repository.MemberRepository
 import de.fhdo.hmmm.backend.repository.MicroserviceRepository
 import de.fhdo.hmmm.backend.repository.ModelArtifactRepository
 import org.slf4j.LoggerFactory
@@ -24,6 +25,8 @@ class MicroserviceService {
     @Autowired
     lateinit var modelArtifactRepo : ModelArtifactRepository
 
+    @Autowired
+    lateinit var memberRepo : MemberRepository
     /**
      * Adds a *ModelArtifact* to a microservice. The artifact must have been persisted, i.e., it must contain an id.
      * @param serviceId Identifier of the Microservice that will add the *ModelArtifact*.
@@ -103,6 +106,8 @@ class MicroserviceService {
         if(found != null) {
             found.name = service.name!!
             found.repositoryLink = service.repositoryLink
+            found.plannedFeatures = service.plannedFeatures
+            found.contactPerson = service.contactPersonId?.let { memberRepo.findById(it).orElseThrow() }
             found.models.clear()
             service.modelIds.forEach {
                 // due to JPA the ref is maintained in the One-part of ManyToOne.

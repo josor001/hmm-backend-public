@@ -36,7 +36,7 @@ class Microservice(
         return "Microservice(name='$name', " +
                 "repositoryLink='$repositoryLink', " +
                 "plannedFeatures=${plannedFeatures.joinToString(prefix = "[", postfix = "]", separator= ",")}, " +
-                "repositoryLink='$contactPerson', " +
+                "contactPerson='$contactPerson', " +
                 "models=${models.joinToString(prefix = "[", postfix = "]", separator= ",")}, " +
                 "id=$id)"
     }
