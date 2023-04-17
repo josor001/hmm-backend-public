@@ -3,6 +3,7 @@ package de.fhdo.hmmm.backend.service
 import de.fhdo.hmmm.backend.dto.SoftwaresystemDto
 import de.fhdo.hmmm.backend.dto.TeamDto
 import de.fhdo.hmmm.backend.model.Team
+import de.fhdo.hmmm.backend.repository.MemberRepository
 import de.fhdo.hmmm.backend.repository.MicroserviceRepository
 import de.fhdo.hmmm.backend.repository.TeamRepository
 import org.slf4j.LoggerFactory
@@ -20,6 +21,9 @@ class TeamService {
 
     @Autowired
     lateinit var teamRepo : TeamRepository
+
+    @Autowired
+    lateinit var memberRepo : MemberRepository
 
     @Autowired
     lateinit var microserviceRepo : MicroserviceRepository
@@ -60,6 +64,44 @@ class TeamService {
             return true
         } else return false
     }
+
+    /**
+     * Adds a *Member* to the team. Member must have been persisted, i.e., contains an id.
+     * @param teamId Identifier of the team that will have the *Member*.
+     * @param memberId Identifier of the Member that will be added.
+     * @return *TeamDto* of the updated *Team* with added *Member* or *null*
+     * if team or member could not be found by their ids.
+     */
+    fun addMember(teamId : Long, memberId : Long) : TeamDto? {
+        val foundTeam = teamRepo.findById(teamId)
+        val foundMember = memberRepo.findById(memberId)
+        if(foundTeam.isEmpty) {
+            logger.info("Could not find team with id = $teamId")
+            return null
+        }
+        if(foundMember.isEmpty) {
+            logger.info("Could not find member with id = $memberId")
+            return null
+        }
+        foundTeam.get().members.add(foundMember.get())
+        return Team.toDto(teamRepo.save(foundTeam.get()))
+    }
+
+    fun removeMember(teamId : Long, memberId : Long) : Boolean? {
+        val foundTeam = teamRepo.findById(teamId)
+        val foundMember = memberRepo.findById(memberId)
+        if(foundTeam.isEmpty) {
+            throw NoSuchElementException("No Team with id ${teamId} found.")
+        }
+        if(foundMember.isEmpty) {
+            throw NoSuchElementException("No Member with id ${memberId} found.")
+        }
+        if(foundTeam.get().members.remove(foundMember.get())) {
+            teamRepo.save(foundTeam.get())
+            return true
+        } else return false
+    }
+
     /**
      * Creates a new *Team* based on the given *name*.
      * @return *TeamDto* of the newly created team.

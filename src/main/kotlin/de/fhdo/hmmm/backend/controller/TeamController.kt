@@ -42,6 +42,16 @@ class TeamController(val service: TeamService) {
         return Mono.justOrEmpty(service.removeMicroservice(id, serviceId))
     }
 
+    @PutMapping("/{id}/members")
+    private fun addMember(@PathVariable id: Long, @RequestBody memberId: Long): Mono<TeamDto?>? {
+        return Mono.justOrEmpty(service.addMember(id, memberId))
+    }
+
+    @DeleteMapping("/{id}/members/{memberId}")
+    private fun deleteMemberFromTeamById(@PathVariable id: Long, @PathVariable memberId: Long): Mono<Boolean?> {
+        return Mono.justOrEmpty(service.removeMember(id, memberId))
+    }
+
     @DeleteMapping("/{id}")
     private fun deleteTeamById(@PathVariable id: Long): Mono<Boolean?> {
         return Mono.justOrEmpty(service.delete(id))

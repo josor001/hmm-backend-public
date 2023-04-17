@@ -11,11 +11,11 @@ class Team(
     var name: String,
 
     @Column(nullable = true)
-    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    @OneToMany(cascade = [CascadeType.PERSIST], fetch = FetchType.EAGER)
     val ownedMicroservices: MutableSet<Microservice> = mutableSetOf(),
 
     @Column(nullable = true)
-    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    @OneToMany(cascade = [CascadeType.PERSIST], fetch = FetchType.EAGER)
     val members: MutableSet<Member> = mutableSetOf(),
 
     @Id
