@@ -65,7 +65,7 @@ class MemberService {
             found.firstname = member.firstname.orEmpty()
             found.lastname = member.lastname.orEmpty()
             found.profileLink = member.profileLink.orEmpty()
-            found.expertise = member.expertise
+            found.expertise = member.expertise.orEmpty()
             return Member.toDto(memberRepo.save(found))
         }
         return null
