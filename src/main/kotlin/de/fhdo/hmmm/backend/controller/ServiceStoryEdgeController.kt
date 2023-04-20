@@ -18,7 +18,7 @@ class ServiceStoryEdgeController(val edgeService: ServiceStoryEdgeService) {
 
     @PostMapping("")
     private fun createEdge(@RequestBody createDto : ServiceStoryEdgeCreateDto): Mono<ServiceStoryEdgeDto?>? {
-        return Mono.justOrEmpty(edgeService.create(createDto.sourceId, createDto.targetId))
+        return Mono.justOrEmpty(edgeService.create(createDto.sourceId, createDto.targetId, createDto.description))
     }
 
     @PutMapping("")

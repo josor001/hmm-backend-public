@@ -113,10 +113,34 @@ class TeamService {
 
     /**
      * Reads an existing *Team* by its *id*.
-     * @return *TeamDto* of the found team else returns null.
+     * @return *TeamDto* of the found team.
+     * @throws NoSuchElementException when no fitting entity could be found.
      */
     fun read(id : Long) : TeamDto? {
-        val found = teamRepo.findById(id).orElse(null) ?: return null
+        val found = teamRepo.findById(id).orElseThrow()
+        return Team.toDto(found)
+    }
+
+    /**
+     * Reads *Team*s based on the given list of IDs.
+     * @return Set of Teams as *TeamDto*s.
+     */
+    fun readSome(ids: MutableList<Long>) : MutableSet<TeamDto> {
+        val retDto = mutableSetOf<TeamDto>()
+        teamRepo.findAllById(ids).forEach { Team.toDto(it)?.let { dto -> retDto.add(dto) } }
+        return retDto
+    }
+
+    /**
+     * Reads an existing *Team* by the Id of its contained *Microservice*.
+     * @return *TeamDto* of the found team.
+     * @throws NoSuchElementException when no fitting entity could be found.
+     */
+    fun readByServiceId(serviceId: Long): TeamDto? {
+        //TODO This is not implemented efficiently. Refactor to filter in Repo and not here.
+        val foundService = microserviceRepo.findById(serviceId).orElseThrow()
+        val found = teamRepo.findAll().find { team ->  team.ownedMicroservices.contains(foundService)
+        } ?: throw NoSuchElementException("Could not find Team that owns microservice "+foundService.name)
         return Team.toDto(found)
     }
 

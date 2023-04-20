@@ -12,6 +12,11 @@ import reactor.core.publisher.Mono
 @RequestMapping("/teams")
 class TeamController(val service: TeamService) {
 
+    @GetMapping("/microservice/{serviceId}")
+    private fun getTeamByServiceId(@PathVariable serviceId: Long): Mono<TeamDto?> {
+        return Mono.justOrEmpty(service.readByServiceId(serviceId))
+    }
+
     @GetMapping("/{id}")
     private fun getTeamById(@PathVariable id: Long): Mono<TeamDto?> {
         return Mono.justOrEmpty(service.read(id))

@@ -5,4 +5,5 @@ import java.io.Serializable
 data class ServiceStoryEdgeCreateDto(
     val sourceId: Long,
     val targetId: Long,
+    val description: String
 ) : Serializable

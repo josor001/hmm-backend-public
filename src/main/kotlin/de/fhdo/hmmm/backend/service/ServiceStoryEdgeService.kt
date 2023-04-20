@@ -31,12 +31,11 @@ class ServiceStoryEdgeService {
      * Creates a new ServiceStoryEdge based on the source and target vertices, i.e., microservices.
      * @return *ServiceStoryEdgeDto* Dto of the newly created ServiceStoryEdge.
      */
-    fun create(sourceId : Long, targetId : Long) : ServiceStoryEdgeDto? {
+    fun create(sourceId : Long, targetId : Long, description: String) : ServiceStoryEdgeDto? {
         try {
-            val foundSource = serviceRepo.findById(sourceId).orElseThrow()
-            val foundTarget = serviceRepo.findById(targetId).orElseThrow()
-            //val newEdge = edgeRepo.save(ServiceStoryEdge(foundSource, foundTarget))
-            val newEdge = edgeRepo.save(ServiceStoryEdge(sourceId, targetId))
+            serviceRepo.findById(sourceId).orElseThrow()
+            serviceRepo.findById(targetId).orElseThrow()
+            val newEdge = edgeRepo.save(ServiceStoryEdge(sourceId, targetId, description))
             return ServiceStoryEdge.toDto(newEdge)
         } catch (nsee : NoSuchElementException) {
             logger.debug("Could not find source with id $sourceId or target with id $targetId.")
