@@ -7,5 +7,6 @@ data class ServiceStoryDto(
     var description: String? = null,
     val vertexIds: MutableSet<Long> = mutableSetOf(),
     val directedEdgeIds: MutableSet<Long> = mutableSetOf(),
+    var sysId: Long? = null,
     var id: Long? = null
 ) : Serializable

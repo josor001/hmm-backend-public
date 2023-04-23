@@ -19,17 +19,21 @@ class MemberController(val service: MemberService) {
     }
 
     @GetMapping("")
-    private fun getAllMembers(): Flux<MemberDto> {
-        return Flux.fromIterable(service.readAll())
+    private fun getAllMembers(@RequestParam(required = false) sysId : Long?): Flux<MemberDto> {
+        return if(sysId == null) {
+            Flux.fromIterable(service.readAll())
+        } else {
+            Flux.fromIterable(service.readAllBySysId(sysId.toLong()))
+        }
     }
 
     @PostMapping("")
-    private fun createMember(@RequestBody newMember: MemberCreateDto): Mono<MemberDto?>? {
-        return Mono.justOrEmpty(service.create(newMember.firstname, newMember.lastname, newMember.email))
+    private fun createMember(@RequestBody newMember: MemberCreateDto): Mono<MemberDto?> {
+        return Mono.justOrEmpty(service.create(newMember.firstname, newMember.lastname, newMember.email, newMember.sysId))
     }
 
     @PutMapping("")
-    private fun updateMember(@RequestBody member: MemberDto): Mono<MemberDto?>? {
+    private fun updateMember(@RequestBody member: MemberDto): Mono<MemberDto?> {
         return Mono.justOrEmpty(service.update(member))
     }
 

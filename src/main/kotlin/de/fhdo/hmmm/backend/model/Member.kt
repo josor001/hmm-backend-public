@@ -21,8 +21,11 @@ class Member(
     @Column(nullable = true)
     var profileLink: String? = null,
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     var expertise: String? = null,
+
+    @Column(nullable = false)
+    var sysId: Long,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +38,7 @@ class Member(
                 "email='$email', " +
                 "profileLink='$profileLink', " +
                 "expertise=$expertise', " +
+                "sysId=$sysId', " +
                 "id=$id)"
     }
 
@@ -49,6 +53,7 @@ class Member(
                 dto.email = member.email
                 dto.profileLink = member.profileLink
                 dto.expertise = member.expertise
+                dto.sysId = member.sysId
                 return dto
             } catch (e : Exception) {
                 logger.info("An error occurred while transforming to Dto")

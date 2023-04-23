@@ -103,7 +103,6 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>runtime</scope>
         </dependency>
         <!-- Excluding mockito and instead use springmockk as suggest by Bealdung testing Spring with Kotlin -->
         <!-- c.f. https://www.baeldung.com/kotlin/spring-boot-testing -->

@@ -40,8 +40,8 @@ class ServiceStoryAndEdgeTests {
     @Test
     fun create() {
         //Create
-        val sourceRaw = Microservice("ServiceA")
-        val targetRaw = Microservice("ServiceB")
+        val sourceRaw = Microservice("ServiceA", sysId = 1)
+        val targetRaw = Microservice("ServiceB", sysId = 1)
         val source = microserviceRepo.save(sourceRaw)
         val target = microserviceRepo.save(targetRaw)
         assertNotNull(source.id)
@@ -49,7 +49,7 @@ class ServiceStoryAndEdgeTests {
         logger.info("Created microservices $source and $target with Repo.")
         val edgeRaw = ServiceStoryEdge(source.id, target.id)
         logger.info("Created edge $edgeRaw.")
-        val edge = edgeService.create(source.id!!, target.id!!)
+        val edge = edgeService.create(source.id!!, target.id!!, "testDesc")
         assertEquals(source.id, edge!!.sourceId)
         assertEquals(target.id, edge!!.targetId)
         logger.info("Saved edge looks like this $edge.")
@@ -58,16 +58,16 @@ class ServiceStoryAndEdgeTests {
     @Test
     fun createAndUpdateAndDelete() {
         //Create
-        val source = microserviceRepo.save(Microservice("ServiceA"))
-        val target = microserviceRepo.save(Microservice("ServiceB"))
+        val source = microserviceRepo.save(Microservice("ServiceA", sysId = 1))
+        val target = microserviceRepo.save(Microservice("ServiceB", sysId = 1))
         assertNotNull(source.id)
         assertNotNull(target.id)
-        val edge = edgeService.create(source.id!!, target.id!!)
+        val edge = edgeService.create(source.id!!, target.id!!, "testDesc")
         assertEquals(source.id, edge!!.sourceId)
         assertEquals(target.id, edge!!.targetId)
         logger.info("Saved edge looks like this $edge")
         //Update
-        val newTarget = microserviceRepo.save(Microservice("ServiceC"))
+        val newTarget = microserviceRepo.save(Microservice("ServiceC", sysId = 1))
         edge.description = "this is a fine edge."
         edge.targetId = newTarget.id
         val changedEdge = edgeService.update(edge)
@@ -87,16 +87,16 @@ class ServiceStoryAndEdgeTests {
     @Test
     fun createAndInvalidUpdate() {
         //Create
-        val source = microserviceRepo.save(Microservice("ServiceA"))
-        val target = microserviceRepo.save(Microservice("ServiceB"))
+        val source = microserviceRepo.save(Microservice("ServiceA", sysId = 1))
+        val target = microserviceRepo.save(Microservice("ServiceB", sysId = 1))
         assertNotNull(source.id)
         assertNotNull(target.id)
-        val edge = edgeService.create(source.id!!, target.id!!)
+        val edge = edgeService.create(source.id!!, target.id!!, "testDesc")
         assertEquals(source.id, edge!!.sourceId)
         assertEquals(target.id, edge!!.targetId)
         logger.info("Saved edge looks like this $edge")
         //Update
-        val newTarget = microserviceRepo.save(Microservice("ServiceC"))
+        val newTarget = microserviceRepo.save(Microservice("ServiceC", sysId = 1))
         edge.description = "this is a fine edge."
         edge.targetId = 123123
         val changedEdge = edgeService.update(edge)

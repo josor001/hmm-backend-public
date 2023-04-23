@@ -16,12 +16,15 @@ class ServiceStory(
     var description: String? = null,
 
     @Column(nullable = true)
-    @OneToMany(cascade = [CascadeType.PERSIST], fetch = FetchType.LAZY)
+    @OneToMany(cascade = [CascadeType.PERSIST], fetch = FetchType.EAGER)
     val vertices: MutableSet<Microservice> = mutableSetOf(),
 
     @Column(nullable = true)
-    @OneToMany(cascade = [CascadeType.PERSIST], fetch = FetchType.LAZY)
+    @OneToMany(cascade = [CascadeType.PERSIST], fetch = FetchType.EAGER)
     val directedEdges: MutableSet<ServiceStoryEdge> = mutableSetOf(),
+
+    @Column(nullable = false)
+    var sysId: Long,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +36,7 @@ class ServiceStory(
                 "description=$description, " +
                 "vertices=$vertices, " +
                 "directedEdges=$directedEdges, " +
+                "sysId=$sysId, " +
                 "id=$id)"
     }
     companion object {
@@ -41,6 +45,7 @@ class ServiceStory(
             try {
                 var dto = ServiceStoryDto()
                 dto.id = story.id
+                dto.sysId = story.sysId
                 dto.name = story.name
                 dto.description = story.description
                 story.vertices.forEach { it.id?.let { id -> dto.vertexIds.add(id) } }

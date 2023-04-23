@@ -2,9 +2,7 @@ package de.fhdo.hmmm.backend.service
 
 import de.fhdo.hmmm.backend.dto.MicroserviceDto
 import de.fhdo.hmmm.backend.model.Microservice
-import de.fhdo.hmmm.backend.repository.MemberRepository
-import de.fhdo.hmmm.backend.repository.MicroserviceRepository
-import de.fhdo.hmmm.backend.repository.ModelArtifactRepository
+import de.fhdo.hmmm.backend.repository.*
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -23,6 +21,12 @@ class MicroserviceService {
     lateinit var microserviceRepo : MicroserviceRepository
 
     @Autowired
+    lateinit var teamRepo : TeamRepository
+
+    @Autowired
+    lateinit var storyRepo : ServiceStoryRepository
+
+    @Autowired
     lateinit var modelArtifactRepo : ModelArtifactRepository
 
     @Autowired
@@ -38,10 +42,10 @@ class MicroserviceService {
         val foundService = microserviceRepo.findById(serviceId)
         val foundModel = modelArtifactRepo.findById(artifactId)
         if(foundService.isEmpty) {
-            throw NoSuchElementException("No microservice with id ${serviceId} found.")
+            throw NoSuchElementException("No microservice with id $serviceId found.")
         }
         if(foundModel.isEmpty) {
-            throw NoSuchElementException("No model artifact with id ${artifactId} found.")
+            throw NoSuchElementException("No model artifact with id $artifactId found.")
         }
         foundService.get().models.add(foundModel.get())
         return Microservice.toDto(microserviceRepo.save(foundService.get()))
@@ -51,29 +55,29 @@ class MicroserviceService {
      * Removes a *ModelArtifact* from a microservice.
      * @param serviceId Identifier of the Microservice that will add the *ModelArtifact*.
      * @param artifactId Identifier of the *ModelArtifact* that will be added to the *Microservice*.
-     * @return True if removal was successful. Otherwise false.
+     * @return True if removal was successful. Otherwise, false.
      */
     fun removeModelArtifact(serviceId : Long, artifactId : Long) : Boolean {
         val foundService = microserviceRepo.findById(serviceId)
         val foundModel = modelArtifactRepo.findById(artifactId)
         if(foundService.isEmpty) {
-            throw NoSuchElementException("No microservice with id ${serviceId} found.")
+            throw NoSuchElementException("No microservice with id $serviceId found.")
         }
         if(foundModel.isEmpty) {
-            throw NoSuchElementException("No model artifact with id ${artifactId} found.")
+            throw NoSuchElementException("No model artifact with id $artifactId found.")
         }
-        if(foundService.get().models.remove(foundModel.get())) {
+        return if(foundService.get().models.remove(foundModel.get())) {
             microserviceRepo.save(foundService.get())
-            return true
-        } else return false
+            true
+        } else false
     }
 
     /**
      * Creates a new *Microservice* based on the given *name*.
      * @return Dto of the newly created microservice.
      */
-    fun create(name : String) : MicroserviceDto? {
-        val newService = microserviceRepo.save(Microservice(name))
+    fun create(name : String, sysId : Long) : MicroserviceDto? {
+        val newService = microserviceRepo.save(Microservice(name = name, sysId = sysId))
         return Microservice.toDto(newService)
     }
 
@@ -93,6 +97,17 @@ class MicroserviceService {
     fun readAll() : MutableSet<MicroserviceDto> {
         val retDto = mutableSetOf<MicroserviceDto>()
         microserviceRepo.findAll().forEach { Microservice.toDto(it)?.let { dto -> retDto.add(dto) } }
+        return retDto
+    }
+
+    /**
+     * Reads *Microservice*s that are a part of specific system.
+     * @param sysId of the system of which the service is a part of.
+     * @return Set *Microservice*s as *MicroserviceDto*s.
+     */
+    fun readAllBySysId(sysId : Long) : MutableSet<MicroserviceDto> {
+        val retDto = mutableSetOf<MicroserviceDto>()
+        microserviceRepo.findMicroservicesBySysId(sysId).forEach { Microservice.toDto(it)?.let { dto -> retDto.add(dto) } }
         return retDto
     }
 
@@ -126,7 +141,21 @@ class MicroserviceService {
      * @return Returns true if *id* was found and the microservice got deleted else returns false.
      */
     fun delete(id : Long) : Boolean {
-        if(microserviceRepo.findById(id).isPresent) {
+        val toBeDeleted = microserviceRepo.findById(id)
+        if(toBeDeleted.isPresent) {
+            //Delete possible "owns" associations
+            val possibleTeam = teamRepo.findTeamByOwnedMicroservicesContains(toBeDeleted.get())
+            val deletedFromTeam = possibleTeam.get().ownedMicroservices.removeIf {it.id == toBeDeleted.get().id}
+            if(deletedFromTeam)
+                teamRepo.save(possibleTeam.get())
+            //Delete possible Vertices from stories
+            val possibleStories = storyRepo.findServiceStoriesByVerticesContains(toBeDeleted.get())
+            possibleStories.forEach { serviceStory ->
+                val deletedFromStory = serviceStory.vertices.removeIf {it.id == toBeDeleted.get().id}
+                if(deletedFromStory)
+                    storyRepo.save(serviceStory)
+            }
+            //Actual delete
             microserviceRepo.deleteById(id)
             return true
         } else {

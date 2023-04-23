@@ -173,7 +173,7 @@
     <orderEntry type="library" name="Maven: org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.6.4" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.4" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.6.4" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.h2database:h2:2.1.214" level="project" />
+    <orderEntry type="library" name="Maven: com.h2database:h2:2.1.214" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-starter-test:2.7.5" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-test:2.7.5" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-test-autoconfigure:2.7.5" level="project" />

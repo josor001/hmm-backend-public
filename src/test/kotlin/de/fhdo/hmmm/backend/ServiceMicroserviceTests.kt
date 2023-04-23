@@ -31,7 +31,7 @@ class ServiceMicroserviceTests {
 
     @Test
     fun createThroughRepository() {
-        val ms = Microservice("MyService")
+        val ms = Microservice("MyService", sysId = 1)
         val msPersisted = msRepo.save(ms)
         assertNotNull(msPersisted.id)
         logger.info("Created $msPersisted with repository.")
@@ -39,7 +39,7 @@ class ServiceMicroserviceTests {
 
     @Test
     fun createThroughService() {
-        val msDto = msService.create("MyTestService")
+        val msDto = msService.create("MyTestService", sysId = 1)
         assertNotNull(msDto)
         logger.info("Created microservice and received the following dto $msDto with service.")
     }

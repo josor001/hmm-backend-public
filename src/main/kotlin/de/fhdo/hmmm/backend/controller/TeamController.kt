@@ -1,5 +1,7 @@
 package de.fhdo.hmmm.backend.controller
 
+import de.fhdo.hmmm.backend.dto.ServiceStoryDto
+import de.fhdo.hmmm.backend.dto.TeamCreateDto
 import de.fhdo.hmmm.backend.dto.TeamDto
 import de.fhdo.hmmm.backend.service.TeamService
 import org.springframework.web.bind.annotation.*
@@ -23,13 +25,17 @@ class TeamController(val service: TeamService) {
     }
 
     @GetMapping("")
-    private fun getAllTeams(): Flux<TeamDto> {
-        return Flux.fromIterable(service.readAll())
+    private fun getAllTeams(@RequestParam(required = false) sysId : Long?): Flux<TeamDto> {
+        return if(sysId == null) {
+            return Flux.fromIterable(service.readAll())
+        } else {
+            return Flux.fromIterable(service.readAllBySysId(sysId))
+        }
     }
 
     @PostMapping("")
-    private fun createTeam(@RequestBody name: String): Mono<TeamDto?>? {
-        return Mono.justOrEmpty(service.create(name))
+    private fun createTeam(@RequestBody newTeam: TeamCreateDto): Mono<TeamDto?>? {
+        return Mono.justOrEmpty(service.create(newTeam.name, newTeam.sysId))
     }
 
     @PutMapping("")

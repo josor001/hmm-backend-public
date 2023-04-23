@@ -27,6 +27,9 @@ class ServiceStoryEdgeService {
     @Autowired
     lateinit var serviceRepo : MicroserviceRepository
 
+    @Autowired
+    lateinit var storyRepo : ServiceStoryRepository
+
     /**
      * Creates a new ServiceStoryEdge based on the source and target vertices, i.e., microservices.
      * @return *ServiceStoryEdgeDto* Dto of the newly created ServiceStoryEdge.
@@ -76,7 +79,14 @@ class ServiceStoryEdgeService {
      * @return Returns true if Id was found and the ServiceStoryEdge got deleted else returns false.
      */
     fun delete(id : Long) : Boolean {
-        if(edgeRepo.findById(id).isPresent) {
+        val toBeDeleted = edgeRepo.findById(id)
+        if(toBeDeleted.isPresent) {
+            val possibleStories = storyRepo.findServiceStoriesByDirectedEdgesContains(toBeDeleted.get())
+            possibleStories.forEach { serviceStory ->
+                val deletedFromStory = serviceStory.directedEdges.removeIf {it.id == toBeDeleted.get().id}
+                if(deletedFromStory)
+                    storyRepo.save(serviceStory)
+            }
             edgeRepo.deleteById(id)
             return true
         } else {

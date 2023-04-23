@@ -6,4 +6,5 @@ data class MemberCreateDto(
     val firstname: String,
     val lastname: String,
     val email: String,
+    val sysId: Long,
 ) : Serializable

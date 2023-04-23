@@ -1,5 +1,6 @@
 package de.fhdo.hmmm.backend.controller
 
+import de.fhdo.hmmm.backend.dto.ServiceStoryCreateDto
 import de.fhdo.hmmm.backend.dto.ServiceStoryDto
 import de.fhdo.hmmm.backend.service.ServiceStoryService
 import org.springframework.web.bind.annotation.*
@@ -17,13 +18,17 @@ class ServiceStoryController(val storyService: ServiceStoryService) {
     }
 
     @GetMapping("")
-    private fun getAllStories(): Flux<ServiceStoryDto> {
-        return Flux.fromIterable(storyService.readAll())
+    private fun getAllStories(@RequestParam(required = false)  sysId : Long?): Flux<ServiceStoryDto> {
+        return if(sysId == null) {
+            return Flux.fromIterable(storyService.readAll())
+        } else {
+            return Flux.fromIterable(storyService.readAllBySysId(sysId))
+        }
     }
 
     @PostMapping("")
-    private fun createStory(@RequestBody name: String): Mono<ServiceStoryDto?>? {
-        return Mono.justOrEmpty(storyService.create(name))
+    private fun createStory(@RequestBody newStory: ServiceStoryCreateDto): Mono<ServiceStoryDto?>? {
+        return Mono.justOrEmpty(storyService.create(newStory.name, newStory.sysId))
     }
 
     @PutMapping("")
@@ -33,7 +38,7 @@ class ServiceStoryController(val storyService: ServiceStoryService) {
 
     @PutMapping("/{storyId}/vertices")
     private fun addVertex(@PathVariable storyId: Long, @RequestBody vertexId: Long): Mono<ServiceStoryDto?>? {
-        return Mono.justOrEmpty(storyService.addVertice(storyId, vertexId))
+        return Mono.justOrEmpty(storyService.addVertex(storyId, vertexId))
     }
 
     @DeleteMapping("/{storyId}/vertices/{vertexId}")

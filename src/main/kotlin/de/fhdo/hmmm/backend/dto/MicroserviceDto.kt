@@ -8,5 +8,6 @@ data class MicroserviceDto(
     var contactPersonId: Long? = null,
     var plannedFeatures: MutableList<String> = mutableListOf(),
     var modelIds: MutableSet<Long> = mutableSetOf(),
+    var sysId: Long? = null,
     var id: Long? = null
 ) : Serializable

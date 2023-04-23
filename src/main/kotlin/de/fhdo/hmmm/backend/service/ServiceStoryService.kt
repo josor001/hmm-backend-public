@@ -1,5 +1,6 @@
 package de.fhdo.hmmm.backend.service
 
+import de.fhdo.hmmm.backend.dto.ServiceStoryCreateDto
 import de.fhdo.hmmm.backend.dto.ServiceStoryDto
 import de.fhdo.hmmm.backend.model.ServiceStory
 import de.fhdo.hmmm.backend.repository.MicroserviceRepository
@@ -35,14 +36,14 @@ class ServiceStoryService {
      * @return *ServiceStoryDto* of the updated *ServiceStory* with added *Microservice*
      * @throws NoSuchElementException if story or microservice objects with the given ids cannot be found.
      */
-    fun addVertice(storyId : Long, serviceId : Long) : ServiceStoryDto? {
+    fun addVertex(storyId : Long, serviceId : Long) : ServiceStoryDto? {
         val foundStory = storyRepo.findById(storyId)
         val foundService = vertexRepo.findById(serviceId)
         if(foundStory.isEmpty) {
-            throw NoSuchElementException("No ServiceStory with id ${storyId} found.")
+            throw NoSuchElementException("No ServiceStory with id $storyId found.")
         }
         if(foundService.isEmpty) {
-            throw NoSuchElementException("No Microservice with id ${serviceId} found.")
+            throw NoSuchElementException("No Microservice with id $serviceId found.")
         }
         foundStory.get().vertices.add(foundService.get())
         return ServiceStory.toDto(storyRepo.save(foundStory.get()))
@@ -50,7 +51,7 @@ class ServiceStoryService {
 
     /**
      * Removes a *Microservice* vertex from a *ServiceStory*.
-     * @param storyId Identifier of the *ServiceStory* containg the to be removed vertex.
+     * @param storyId Identifier of the *ServiceStory* containing the to be removed vertex.
      * @param serviceId Identifier of the Microservice that shall be removed as vertex.
      * @return true or false depending on operation success
      * @throws NoSuchElementException if story or microservice objects with the given ids cannot be found.
@@ -59,15 +60,15 @@ class ServiceStoryService {
         val foundStory = storyRepo.findById(storyId)
         val foundService = vertexRepo.findById(serviceId)
         if(foundStory.isEmpty) {
-            throw NoSuchElementException("No System with id ${storyId} found.")
+            throw NoSuchElementException("No System with id $storyId found.")
         }
         if(foundService.isEmpty) {
-            throw NoSuchElementException("No Microservice with id ${serviceId} found.")
+            throw NoSuchElementException("No Microservice with id $serviceId found.")
         }
-        if(foundStory.get().vertices.remove(foundService.get())) {
+        return if(foundStory.get().vertices.remove(foundService.get())) {
             storyRepo.save(foundStory.get())
-            return true
-        } else return false
+            true
+        } else false
     }
 
     /**
@@ -82,10 +83,10 @@ class ServiceStoryService {
         val foundStory = storyRepo.findById(storyId)
         val foundEdge = storyEdgeRepo.findById(edgeId)
         if(foundStory.isEmpty) {
-            throw NoSuchElementException("No ServiceStory with id ${storyId} found.")
+            throw NoSuchElementException("No ServiceStory with id $storyId found.")
         }
         if(foundEdge.isEmpty) {
-            throw NoSuchElementException("No ServiceStoryEdge with id ${edgeId} found.")
+            throw NoSuchElementException("No ServiceStoryEdge with id $edgeId found.")
         }
         if(!foundStory.get().vertices.map { it.id }.containsAll(setOf(foundEdge.get().source, foundEdge.get().target))) {
             throw NoSuchElementException("vertices list of story must contain source and target of edge beforehand!")
@@ -105,25 +106,24 @@ class ServiceStoryService {
         val foundStory = storyRepo.findById(storyId)
         val foundEdge = storyEdgeRepo.findById(edgeId)
         if(foundStory.isEmpty) {
-            throw NoSuchElementException("No System with id ${storyId} found.")
+            throw NoSuchElementException("No System with id $storyId found.")
         }
         if(foundEdge.isEmpty) {
-            throw NoSuchElementException("No ServiceStoryEdge with id ${edgeId} found.")
+            throw NoSuchElementException("No ServiceStoryEdge with id $edgeId found.")
         }
-        if(foundStory.get().directedEdges.remove(foundEdge.get())) {
+        return if(foundStory.get().directedEdges.remove(foundEdge.get())) {
             storyRepo.save(foundStory.get())
             storyEdgeRepo.deleteById(foundEdge.get().id!!)
-            return true
-        } else return false
+            true
+        } else false
     }
 
     /**
      * Creates a new *ServiceStory* based on the given *name*.
      * @return Dto of the newly created ServiceStory.
      */
-    fun create(name : String) : ServiceStoryDto? {
-        val newStory = storyRepo.save(ServiceStory(name))
-        return ServiceStory.toDto(newStory)
+    fun create(name : String, sysId : Long) : ServiceStoryDto? {
+        return ServiceStory.toDto(storyRepo.save(ServiceStory(name = name,sysId = sysId)))
     }
 
     /**
@@ -144,6 +144,18 @@ class ServiceStoryService {
         storyRepo.findAll().forEach { ServiceStory.toDto(it)?.let { dto -> retDto.add(dto) } }
         return retDto
     }
+
+    /**
+     * Reads all *Team*s for the given sysId.
+     * @param sysId the systemId to search for.
+     * @return Set of all *Team*s as *TeamDto*s.
+     */
+    fun readAllBySysId(sysId : Long) : MutableSet<ServiceStoryDto> {
+        val retDto = mutableSetOf<ServiceStoryDto>()
+        storyRepo.findServiceStoriesBySysId(sysId).forEach { ServiceStory.toDto(it)?.let { dto -> retDto.add(dto) } }
+        return retDto
+    }
+
 
     /**
      * Updates an existing *ServiceStory* by its *ServiceStoryDto*. Entity must have been persisted, i.e., the dto
@@ -176,12 +188,12 @@ class ServiceStoryService {
      * @return Returns true if *id* was found and the story got deleted else returns false.
      */
     fun delete(id : Long) : Boolean {
-        if(storyRepo.findById(id).isPresent) {
+        return if(storyRepo.findById(id).isPresent) {
             storyRepo.deleteById(id)
-            return true
+            true
         } else {
             logger.debug("Could not find service story with id = $id")
-            return false
+            false
         }
     }
 }

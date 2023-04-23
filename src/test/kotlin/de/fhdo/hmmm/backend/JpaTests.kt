@@ -58,8 +58,8 @@ class JpaTests {
         var org = Organization("MyTestOrga")
         val system = Softwaresystem("SuperSystem")
         org.systemUnderDevelopment = system
-        org.teams.add(Team("Team1"))
-        org.teams.add(Team("Team2"))
+        org.teams.add(Team("Team1", sysId = 1))
+        org.teams.add(Team("Team2", sysId = 1))
         org = em.persist(org)
         logger.info("Id of persisted org is ${org.id}")
         assertNotNull(org.systemUnderDevelopment)

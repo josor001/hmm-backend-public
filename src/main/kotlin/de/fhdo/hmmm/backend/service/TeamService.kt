@@ -1,6 +1,5 @@
 package de.fhdo.hmmm.backend.service
 
-import de.fhdo.hmmm.backend.dto.SoftwaresystemDto
 import de.fhdo.hmmm.backend.dto.TeamDto
 import de.fhdo.hmmm.backend.model.Team
 import de.fhdo.hmmm.backend.repository.MemberRepository
@@ -54,15 +53,15 @@ class TeamService {
         val foundTeam = teamRepo.findById(teamId)
         val foundService = microserviceRepo.findById(serviceId)
         if(foundTeam.isEmpty) {
-            throw NoSuchElementException("No Team with id ${teamId} found.")
+            throw NoSuchElementException("No Team with id $teamId found.")
         }
         if(foundService.isEmpty) {
-            throw NoSuchElementException("No Microservice with id ${serviceId} found.")
+            throw NoSuchElementException("No Microservice with id $serviceId found.")
         }
-        if(foundTeam.get().ownedMicroservices.remove(foundService.get())) {
+        return if(foundTeam.get().ownedMicroservices.remove(foundService.get())) {
             teamRepo.save(foundTeam.get())
-            return true
-        } else return false
+            true
+        } else false
     }
 
     /**
@@ -91,23 +90,23 @@ class TeamService {
         val foundTeam = teamRepo.findById(teamId)
         val foundMember = memberRepo.findById(memberId)
         if(foundTeam.isEmpty) {
-            throw NoSuchElementException("No Team with id ${teamId} found.")
+            throw NoSuchElementException("No Team with id $teamId found.")
         }
         if(foundMember.isEmpty) {
-            throw NoSuchElementException("No Member with id ${memberId} found.")
+            throw NoSuchElementException("No Member with id $memberId found.")
         }
-        if(foundTeam.get().members.remove(foundMember.get())) {
+        return if(foundTeam.get().members.remove(foundMember.get())) {
             teamRepo.save(foundTeam.get())
-            return true
-        } else return false
+            true
+        } else false
     }
 
     /**
      * Creates a new *Team* based on the given *name*.
      * @return *TeamDto* of the newly created team.
      */
-    fun create(name : String) : TeamDto? {
-        val newTeam = teamRepo.save(Team(name))
+    fun create(name : String, sysId: Long) : TeamDto? {
+        val newTeam = teamRepo.save(Team(name = name, sysId = sysId))
         return Team.toDto(newTeam)
     }
 
@@ -132,16 +131,15 @@ class TeamService {
     }
 
     /**
-     * Reads an existing *Team* by the Id of its contained *Microservice*.
+     * Reads an existing *Team* by the id of its contained *Microservice*.
      * @return *TeamDto* of the found team.
      * @throws NoSuchElementException when no fitting entity could be found.
      */
     fun readByServiceId(serviceId: Long): TeamDto? {
-        //TODO This is not implemented efficiently. Refactor to filter in Repo and not here.
         val foundService = microserviceRepo.findById(serviceId).orElseThrow()
-        val found = teamRepo.findAll().find { team ->  team.ownedMicroservices.contains(foundService)
-        } ?: throw NoSuchElementException("Could not find Team that owns microservice "+foundService.name)
-        return Team.toDto(found)
+        val found = teamRepo.findTeamByOwnedMicroservicesContains(foundService)
+        //val found = teamRepo.findAll().find { team ->  team.ownedMicroservices.contains(foundService)
+        return if (found.isEmpty) null else Team.toDto(found.get())
     }
 
     /**
@@ -153,6 +151,18 @@ class TeamService {
         teamRepo.findAll().forEach { Team.toDto(it)?.let { dto -> retDto.add(dto) } }
         return retDto
     }
+
+    /**
+     * Reads all *Team*s for the given sysId.
+     * @param sysId the systemId to search for.
+     * @return Set of all *Team*s as *TeamDto*s.
+     */
+    fun readAllBySysId(sysId : Long) : MutableSet<TeamDto> {
+        val retDto = mutableSetOf<TeamDto>()
+        teamRepo.findTeamsBySysId(sysId).forEach { Team.toDto(it)?.let { dto -> retDto.add(dto) } }
+        return retDto
+    }
+
 
     /**
      * Updates an existing *Team* by its *TeamDto*. Team must have been persisted, i.e., the Dto
@@ -169,6 +179,11 @@ class TeamService {
                 //TODO Check if this works or JPA struggles with OneToMany maintained in Many part.
                 found.ownedMicroservices.add(microserviceRepo.findById(it).get())
             }
+            found.members.clear()
+            team.memberIds.forEach {
+                //TODO Check if this works or JPA struggles with OneToMany maintained in Many part.
+                found.members.add(memberRepo.findById(it).get())
+            }
             return Team.toDto(teamRepo.save(found))
         }
         return null
@@ -179,12 +194,12 @@ class TeamService {
      * @return Returns true if a Team with the *id* exists got successfully deleted else returns false.
      */
     fun delete(id : Long) : Boolean {
-        if(teamRepo.findById(id).isPresent) {
+        return if(teamRepo.findById(id).isPresent) {
             teamRepo.deleteById(id)
-            return true
+            true
         } else {
             logger.debug("Could not find team with id = $id")
-            return false
+            false
         }
     }
 }

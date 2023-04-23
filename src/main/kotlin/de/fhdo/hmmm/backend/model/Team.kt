@@ -15,8 +15,11 @@ class Team(
     val ownedMicroservices: MutableSet<Microservice> = mutableSetOf(),
 
     @Column(nullable = true)
-    @OneToMany(cascade = [CascadeType.PERSIST], fetch = FetchType.EAGER)
+    @OneToMany(cascade = [CascadeType.PERSIST],  fetch = FetchType.EAGER)
     val members: MutableSet<Member> = mutableSetOf(),
+
+    @Column(nullable = false)
+    var sysId: Long,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +29,7 @@ class Team(
         return "Team(name='$name', " +
                 "ownedMicroservices=${ownedMicroservices.joinToString(prefix = "[", postfix = "]", separator= ",")}, " +
                 "members=${members.joinToString(prefix = "[", postfix = "]", separator= ",")}, " +
+                "sysId='$sysId', " +
                 "id=$id)"
     }
 
@@ -35,6 +39,7 @@ class Team(
             try {
                 var dto = TeamDto()
                 dto.id = team.id
+                dto.sysId = team.sysId
                 dto.name = team.name
                 team.members.forEach { it.id?.let { id -> dto.memberIds.add(id) } }
                 team.ownedMicroservices.forEach { it.id?.let { id -> dto.ownedMicroserviceIds.add(id) } }

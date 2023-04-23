@@ -1,7 +1,6 @@
 package de.fhdo.hmmm.backend.controller
 
-import de.fhdo.hmmm.backend.dto.MicroserviceDto
-import de.fhdo.hmmm.backend.dto.OrganizationDto
+import de.fhdo.hmmm.backend.dto.*
 import de.fhdo.hmmm.backend.service.MicroserviceService
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
@@ -21,13 +20,18 @@ class MicroserviceController(val service: MicroserviceService) {
     }
 
     @GetMapping("")
-    private fun getAllMicroservices(): Flux<MicroserviceDto> {
-        return Flux.fromIterable(service.readAll())
+    private fun getAllMicroservices(@RequestParam(required = false) sysId : Long?): Flux<MicroserviceDto> {
+        return if(sysId == null) {
+            Flux.fromIterable(service.readAll())
+        } else {
+            Flux.fromIterable(service.readAllBySysId(sysId))
+        }
+
     }
 
     @PostMapping("")
-    private fun createMicroservice(@RequestBody name: String): Mono<MicroserviceDto?>? {
-        return Mono.justOrEmpty(service.create(name))
+    private fun createMicroservice(@RequestBody newMicroservice: MicroserviceCreateDto): Mono<MicroserviceDto?>? {
+        return Mono.justOrEmpty(service.create(newMicroservice.name, newMicroservice.sysId))
     }
 
     @PutMapping("")

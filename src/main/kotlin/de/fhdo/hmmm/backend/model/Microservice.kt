@@ -15,7 +15,7 @@ class Microservice(
     var repositoryLink: String? = null,
 
     //inserted due to results from interview series
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Column(nullable = false)
     var plannedFeatures: MutableList<String> = mutableListOf(),
 
@@ -28,6 +28,9 @@ class Microservice(
     @OneToMany(mappedBy = "microservice", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     val models: MutableSet<ModelArtifact> = mutableSetOf(),
 
+    @Column(nullable = false)
+    var sysId: Long,
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
@@ -38,6 +41,7 @@ class Microservice(
                 "plannedFeatures=${plannedFeatures.joinToString(prefix = "[", postfix = "]", separator= ",")}, " +
                 "contactPerson='$contactPerson', " +
                 "models=${models.joinToString(prefix = "[", postfix = "]", separator= ",")}, " +
+                "sysId='$sysId', " +
                 "id=$id)"
     }
     companion object {
@@ -46,6 +50,7 @@ class Microservice(
             try {
                 var dto = MicroserviceDto()
                 dto.id = microservice.id
+                dto.sysId = microservice.sysId
                 dto.name = microservice.name
                 dto.contactPersonId = microservice.contactPerson?.id
                 dto.repositoryLink = microservice.repositoryLink
