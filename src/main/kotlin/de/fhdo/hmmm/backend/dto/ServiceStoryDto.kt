@@ -5,7 +5,7 @@ import java.io.Serializable
 data class ServiceStoryDto(
     var name: String? = null,
     var description: String? = null,
-    val vertexIds: MutableSet<Long> = mutableSetOf(),
+    var vertexIds: MutableSet<Long> = mutableSetOf(),
     val directedEdgeIds: MutableSet<Long> = mutableSetOf(),
     var sysId: Long? = null,
     var id: Long? = null

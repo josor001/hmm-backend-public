@@ -143,6 +143,21 @@ class TeamService {
     }
 
     /**
+     * Reads an existing *Team* by the id of its contained *Member*.
+     * @return *TeamDto* of the found team.
+     * @throws NoSuchElementException when no fitting entity could be found.
+     */
+    fun readByMemberId(memberId: Long): TeamDto? {
+        val foundMember = memberRepo.findById(memberId).orElseThrow()
+        val found = teamRepo.findTeamByMembersContains(foundMember)
+        //val found = teamRepo.findAll().find { team ->  team.ownedMicroservices.contains(foundService)
+        return if (found.isEmpty) null else Team.toDto(found.get())
+    }
+
+
+
+
+    /**
      * Reads all existing *Team*s.
      * @return Set of all Teams as *TeamDto*s.
      */

@@ -1,9 +1,11 @@
 package de.fhdo.hmmm.backend.service
 
 import de.fhdo.hmmm.backend.dto.OrganizationDto
+import de.fhdo.hmmm.backend.dto.ServiceStoryDto
 import de.fhdo.hmmm.backend.dto.ServiceStoryEdgeDto
 import de.fhdo.hmmm.backend.dto.TeamDto
 import de.fhdo.hmmm.backend.model.Organization
+import de.fhdo.hmmm.backend.model.ServiceStory
 import de.fhdo.hmmm.backend.model.ServiceStoryEdge
 import de.fhdo.hmmm.backend.model.Softwaresystem
 import de.fhdo.hmmm.backend.repository.*
@@ -34,11 +36,11 @@ class ServiceStoryEdgeService {
      * Creates a new ServiceStoryEdge based on the source and target vertices, i.e., microservices.
      * @return *ServiceStoryEdgeDto* Dto of the newly created ServiceStoryEdge.
      */
-    fun create(sourceId : Long, targetId : Long, description: String) : ServiceStoryEdgeDto? {
+    fun create(sourceId : Long, targetId : Long, description: String, sysId: Long) : ServiceStoryEdgeDto? {
         try {
             serviceRepo.findById(sourceId).orElseThrow()
             serviceRepo.findById(targetId).orElseThrow()
-            val newEdge = edgeRepo.save(ServiceStoryEdge(sourceId, targetId, description))
+            val newEdge = edgeRepo.save(ServiceStoryEdge(source = sourceId, target = targetId, description =  description, sysId =  sysId))
             return ServiceStoryEdge.toDto(newEdge)
         } catch (nsee : NoSuchElementException) {
             logger.debug("Could not find source with id $sourceId or target with id $targetId.")
@@ -54,6 +56,27 @@ class ServiceStoryEdgeService {
     fun read(id : Long) : ServiceStoryEdgeDto? {
         val found = edgeRepo.findById(id).orElse(null) ?: return null
         return ServiceStoryEdge.toDto(found)
+    }
+
+    /**
+     * Reads all existing *ServiceStory*s.
+     * @return Set of all *ServiceStory*s as *ServiceStoryDto*s.
+     */
+    fun readAll() : MutableSet<ServiceStoryEdgeDto> {
+        val retDto = mutableSetOf<ServiceStoryEdgeDto>()
+        edgeRepo.findAll().forEach { ServiceStoryEdge.toDto(it)?.let { dto -> retDto.add(dto) } }
+        return retDto
+    }
+
+    /**
+     * Reads all *Team*s for the given sysId.
+     * @param sysId the systemId to search for.
+     * @return Set of all *Team*s as *TeamDto*s.
+     */
+    fun readAllBySysId(sysId : Long) : MutableSet<ServiceStoryEdgeDto> {
+        val retDto = mutableSetOf<ServiceStoryEdgeDto>()
+        edgeRepo.findServiceStoryEdgesBySysId(sysId).forEach { ServiceStoryEdge.toDto(it)?.let { dto -> retDto.add(dto) } }
+        return retDto
     }
 
     /**

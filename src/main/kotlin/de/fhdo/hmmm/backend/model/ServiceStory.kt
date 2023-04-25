@@ -15,9 +15,9 @@ class ServiceStory(
     @Column(nullable = true)
     var description: String? = null,
 
+    @ElementCollection(fetch = FetchType.EAGER)
     @Column(nullable = true)
-    @OneToMany(cascade = [CascadeType.PERSIST], fetch = FetchType.EAGER)
-    val vertices: MutableSet<Microservice> = mutableSetOf(),
+    val vertices: MutableSet<Long> = mutableSetOf(),
 
     @Column(nullable = true)
     @OneToMany(cascade = [CascadeType.PERSIST], fetch = FetchType.EAGER)
@@ -48,7 +48,7 @@ class ServiceStory(
                 dto.sysId = story.sysId
                 dto.name = story.name
                 dto.description = story.description
-                story.vertices.forEach { it.id?.let { id -> dto.vertexIds.add(id) } }
+                dto.vertexIds = story.vertices
                 story.directedEdges.forEach { it.id?.let { id -> dto.directedEdgeIds.add(id) } }
                 return dto
             } catch (e : Exception) {

@@ -19,6 +19,11 @@ class TeamController(val service: TeamService) {
         return Mono.justOrEmpty(service.readByServiceId(serviceId))
     }
 
+    @GetMapping("/member/{memberId}")
+    private fun getTeamByMemberId(@PathVariable memberId: Long): Mono<TeamDto?> {
+        return Mono.justOrEmpty(service.readByMemberId(memberId))
+    }
+
     @GetMapping("/{id}")
     private fun getTeamById(@PathVariable id: Long): Mono<TeamDto?> {
         return Mono.justOrEmpty(service.read(id))

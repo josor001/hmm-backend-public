@@ -45,7 +45,7 @@ class ServiceStoryService {
         if(foundService.isEmpty) {
             throw NoSuchElementException("No Microservice with id $serviceId found.")
         }
-        foundStory.get().vertices.add(foundService.get())
+        foundStory.get().vertices.add(foundService.get().id!!)
         return ServiceStory.toDto(storyRepo.save(foundStory.get()))
     }
 
@@ -65,7 +65,7 @@ class ServiceStoryService {
         if(foundService.isEmpty) {
             throw NoSuchElementException("No Microservice with id $serviceId found.")
         }
-        return if(foundStory.get().vertices.remove(foundService.get())) {
+        return if(foundStory.get().vertices.remove(foundService.get().id!!)) {
             storyRepo.save(foundStory.get())
             true
         } else false
@@ -88,7 +88,7 @@ class ServiceStoryService {
         if(foundEdge.isEmpty) {
             throw NoSuchElementException("No ServiceStoryEdge with id $edgeId found.")
         }
-        if(!foundStory.get().vertices.map { it.id }.containsAll(setOf(foundEdge.get().source, foundEdge.get().target))) {
+        if(!foundStory.get().vertices.map {it}.containsAll(setOf(foundEdge.get().source, foundEdge.get().target))) {
             throw NoSuchElementException("vertices list of story must contain source and target of edge beforehand!")
         }
         foundStory.get().directedEdges.add(foundEdge.get())
@@ -175,8 +175,7 @@ class ServiceStoryService {
 
             found.vertices.clear()
             story.vertexIds.forEach {
-                //TODO Check if this works or JPA struggles with OneToMany maintained in Many part.
-                found.vertices.add(vertexRepo.findById(it).get())
+                found.vertices.add(vertexRepo.findById(it).get().id!!)
             }
             return ServiceStory.toDto(storyRepo.save(found))
         }

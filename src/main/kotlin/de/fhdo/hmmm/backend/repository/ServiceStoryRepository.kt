@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface ServiceStoryRepository : JpaRepository<ServiceStory, Long> {
     fun findServiceStoriesBySysId(sysId: Long) : List<ServiceStory>
-    fun findServiceStoriesByVerticesContains(ms: Microservice) : List<ServiceStory>
+    fun findServiceStoriesByVerticesContains(msId: Long) : List<ServiceStory>
     fun findServiceStoriesByDirectedEdgesContains(edge: ServiceStoryEdge) : List<ServiceStory>
 }

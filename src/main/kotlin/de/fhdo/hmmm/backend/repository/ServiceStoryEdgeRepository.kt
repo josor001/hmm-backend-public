@@ -4,4 +4,5 @@ import de.fhdo.hmmm.backend.model.ServiceStoryEdge
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface ServiceStoryEdgeRepository : JpaRepository<ServiceStoryEdge, Long> {
+    fun findServiceStoryEdgesBySysId(sysId: Long) : List<ServiceStoryEdge>
 }

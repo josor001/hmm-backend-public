@@ -145,13 +145,16 @@ class MicroserviceService {
         if(toBeDeleted.isPresent) {
             //Delete possible "owns" associations
             val possibleTeam = teamRepo.findTeamByOwnedMicroservicesContains(toBeDeleted.get())
-            val deletedFromTeam = possibleTeam.get().ownedMicroservices.removeIf {it.id == toBeDeleted.get().id}
-            if(deletedFromTeam)
-                teamRepo.save(possibleTeam.get())
+            if(possibleTeam.isPresent) {
+                val deletedFromTeam = possibleTeam.get().ownedMicroservices.removeIf {it.id == toBeDeleted.get().id}
+                if(deletedFromTeam)
+                    teamRepo.save(possibleTeam.get())
+            }
+
             //Delete possible Vertices from stories
-            val possibleStories = storyRepo.findServiceStoriesByVerticesContains(toBeDeleted.get())
+            val possibleStories = storyRepo.findServiceStoriesByVerticesContains(toBeDeleted.get().id!!)
             possibleStories.forEach { serviceStory ->
-                val deletedFromStory = serviceStory.vertices.removeIf {it.id == toBeDeleted.get().id}
+                val deletedFromStory = serviceStory.vertices.removeIf {it == toBeDeleted.get().id!!}
                 if(deletedFromStory)
                     storyRepo.save(serviceStory)
             }

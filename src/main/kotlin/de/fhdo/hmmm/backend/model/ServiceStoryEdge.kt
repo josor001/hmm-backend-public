@@ -18,12 +18,16 @@ class ServiceStoryEdge(
     @Column(nullable = true)
     var description: String? = null,
 
+    @Column(nullable = false)
+    var sysId: Long,
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
 ) {
     override fun toString(): String {
         return "ServiceStoryEdge(id=$id, " +
+                "sysId=$sysId, " +
                 "description=$description, " +
                 "source=$source, " +
                 "target=$target)"
@@ -35,6 +39,7 @@ class ServiceStoryEdge(
             try {
                 var dto = ServiceStoryEdgeDto()
                 dto.id = edge.id
+                dto.sysId = edge.sysId
                 dto.description = edge.description
                 dto.sourceId = edge.source
                 dto.targetId = edge.target
