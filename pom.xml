@@ -24,6 +24,7 @@
     </distributionManagement>
 
     <!-- other private repos -->
+    <!-- for test public build not added
     <repositories>
         <repository>
             <id>github-visualizer</id>
@@ -41,7 +42,7 @@
             <url>https://maven.pkg.github.com/josor001/mmm</url>
         </repository>
     </repositories>
-
+ -->
     <properties>
         <java.version>11</java.version>
         <kotlin.version>1.6.21</kotlin.version>
@@ -49,6 +50,7 @@
 
     <dependencies>
         <!-- HMMM Utility Dependencies-->
+        <!--
         <dependency>
             <groupId>de.fhdo.hmmm.utility</groupId>
             <artifactId>modelcore</artifactId>
@@ -64,7 +66,7 @@
             <artifactId>modelmerger</artifactId>
             <version>0.2</version>
         </dependency>
-
+        -->
         <!-- Other Dependencies-->
         <dependency>
             <groupId>org.springdoc</groupId>
