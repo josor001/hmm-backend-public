@@ -120,6 +120,7 @@ class MicroserviceService {
         val found = service.id?.let { microserviceRepo.findById(it).orElse(null) }
         if(found != null) {
             found.name = service.name!!
+            found.purpose = service.purpose
             found.repositoryLink = service.repositoryLink
             found.plannedFeatures = service.plannedFeatures
             found.contactPerson = service.contactPersonId?.let { memberRepo.findById(it).orElseThrow() }

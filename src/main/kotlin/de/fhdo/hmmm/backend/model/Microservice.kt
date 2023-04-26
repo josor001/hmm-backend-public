@@ -33,10 +33,15 @@ class Microservice(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
+    var id: Long? = null,
+
+    @Column(nullable = true)
+    var purpose: String? = null,
+
 ) {
     override fun toString(): String {
         return "Microservice(name='$name', " +
+                "purpose='$purpose', " +
                 "repositoryLink='$repositoryLink', " +
                 "plannedFeatures=${plannedFeatures.joinToString(prefix = "[", postfix = "]", separator= ",")}, " +
                 "contactPerson='$contactPerson', " +
@@ -52,6 +57,7 @@ class Microservice(
                 dto.id = microservice.id
                 dto.sysId = microservice.sysId
                 dto.name = microservice.name
+                dto.purpose = microservice.purpose
                 dto.contactPersonId = microservice.contactPerson?.id
                 dto.repositoryLink = microservice.repositoryLink
                 dto.plannedFeatures.addAll(microservice.plannedFeatures)
