@@ -19,9 +19,9 @@ class ServiceStory(
     @Column(nullable = true)
     val vertices: MutableSet<Long> = mutableSetOf(),
 
+    @ElementCollection(fetch = FetchType.EAGER)
     @Column(nullable = true)
-    @OneToMany(cascade = [CascadeType.PERSIST], fetch = FetchType.EAGER)
-    val directedEdges: MutableSet<ServiceStoryEdge> = mutableSetOf(),
+    val directedEdges: MutableSet<Long> = mutableSetOf(),
 
     @Column(nullable = false)
     var sysId: Long,
@@ -49,7 +49,7 @@ class ServiceStory(
                 dto.name = story.name
                 dto.description = story.description
                 dto.vertexIds = story.vertices
-                story.directedEdges.forEach { it.id?.let { id -> dto.directedEdgeIds.add(id) } }
+                dto.directedEdgeIds = story.directedEdges
                 return dto
             } catch (e : Exception) {
                 logger.info("An error occurred while transforming to Dto")

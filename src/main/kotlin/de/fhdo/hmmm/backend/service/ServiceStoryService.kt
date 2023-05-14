@@ -3,6 +3,7 @@ package de.fhdo.hmmm.backend.service
 import de.fhdo.hmmm.backend.dto.ServiceStoryCreateDto
 import de.fhdo.hmmm.backend.dto.ServiceStoryDto
 import de.fhdo.hmmm.backend.model.ServiceStory
+import de.fhdo.hmmm.backend.model.ServiceStoryEdge
 import de.fhdo.hmmm.backend.repository.MicroserviceRepository
 import de.fhdo.hmmm.backend.repository.ServiceStoryEdgeRepository
 import de.fhdo.hmmm.backend.repository.ServiceStoryRepository
@@ -91,7 +92,7 @@ class ServiceStoryService {
         if(!foundStory.get().vertices.map {it}.containsAll(setOf(foundEdge.get().source, foundEdge.get().target))) {
             throw NoSuchElementException("vertices list of story must contain source and target of edge beforehand!")
         }
-        foundStory.get().directedEdges.add(foundEdge.get())
+        foundStory.get().directedEdges.add(foundEdge.get().id!!)
         return ServiceStory.toDto(storyRepo.save(foundStory.get()))
     }
 
@@ -111,7 +112,7 @@ class ServiceStoryService {
         if(foundEdge.isEmpty) {
             throw NoSuchElementException("No ServiceStoryEdge with id $edgeId found.")
         }
-        return if(foundStory.get().directedEdges.remove(foundEdge.get())) {
+        return if(foundStory.get().directedEdges.remove(foundEdge.get().id)) {
             storyRepo.save(foundStory.get())
             storyEdgeRepo.deleteById(foundEdge.get().id!!)
             true
@@ -167,11 +168,15 @@ class ServiceStoryService {
         if(found != null) {
             found.name = story.name!!
             found.description = story.description
+            //check if their are orphaned Edges and, if yes, delete them
+            val orphanEdges = found.directedEdges.removeAll(story.directedEdgeIds)
+            if(orphanEdges)
+                found.directedEdges.forEach { edgeId -> storyEdgeRepo.deleteById(edgeId) }
+            //clear all old edges
+            //note the we currently rewrite the whole set all the time. Doesnt feel very efficient
             found.directedEdges.clear()
-            story.directedEdgeIds.forEach {
-                //TODO Check if this works or JPA struggles with OneToMany maintained in Many part.
-                found.directedEdges.add(storyEdgeRepo.findById(it).get())
-            }
+            //add the new edges
+            story.directedEdgeIds.forEach { found.directedEdges.add(storyEdgeRepo.findById(it).get().id!!) }
 
             found.vertices.clear()
             story.vertexIds.forEach {
@@ -184,15 +189,24 @@ class ServiceStoryService {
 
     /**
      * Deletes an existing *ServiceStory* by its *id*.
+     * Also deletes ServiceStoryEdges which are a part of the to be deleted story.
      * @return Returns true if *id* was found and the story got deleted else returns false.
      */
     fun delete(id : Long) : Boolean {
-        return if(storyRepo.findById(id).isPresent) {
+
+        val toBeDeleted = storyRepo.findById(id)
+
+        if(toBeDeleted.isPresent) {
+            //Delete Edges that are part of the ServiceStory
+            toBeDeleted.get().directedEdges.forEach { edgeId: Long ->
+                storyEdgeRepo.deleteById(edgeId)
+            }
+            //Actual Delete
             storyRepo.deleteById(id)
-            true
+            return true
         } else {
-            logger.debug("Could not find service story with id = $id")
-            false
+            logger.debug("Could not find ServiceStory with id = $id")
+            return false
         }
     }
 }

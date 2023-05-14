@@ -106,7 +106,7 @@ class ServiceStoryEdgeService {
         if(toBeDeleted.isPresent) {
             val possibleStories = storyRepo.findServiceStoriesByDirectedEdgesContains(toBeDeleted.get())
             possibleStories.forEach { serviceStory ->
-                val deletedFromStory = serviceStory.directedEdges.removeIf {it.id == toBeDeleted.get().id}
+                val deletedFromStory = serviceStory.directedEdges.removeIf {it == toBeDeleted.get().id}
                 if(deletedFromStory)
                     storyRepo.save(serviceStory)
             }
