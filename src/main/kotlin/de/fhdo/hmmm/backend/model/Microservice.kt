@@ -17,7 +17,7 @@ class Microservice(
     //inserted due to results from interview series
     @ElementCollection(fetch = FetchType.EAGER)
     @Column(nullable = false)
-    var plannedFeatures: MutableList<String> = mutableListOf(),
+    var plannedFeatures: MutableMap<String, String> = mutableMapOf(),
 
     //inserted due to results from interview series
     //owning side
@@ -39,16 +39,10 @@ class Microservice(
     var purpose: String? = null,
 
 ) {
-    override fun toString(): String {
-        return "Microservice(name='$name', " +
-                "purpose='$purpose', " +
-                "repositoryLink='$repositoryLink', " +
-                "plannedFeatures=${plannedFeatures.joinToString(prefix = "[", postfix = "]", separator= ",")}, " +
-                "contactPerson='$contactPerson', " +
-                "models=${models.joinToString(prefix = "[", postfix = "]", separator= ",")}, " +
-                "sysId='$sysId', " +
-                "id=$id)"
-    }
+
+
+
+
     companion object {
         val logger = LoggerFactory.getLogger(Microservice::class.java)
         fun toDto(microservice: Microservice): MicroserviceDto? {
@@ -60,7 +54,7 @@ class Microservice(
                 dto.purpose = microservice.purpose
                 dto.contactPersonId = microservice.contactPerson?.id
                 dto.repositoryLink = microservice.repositoryLink
-                dto.plannedFeatures.addAll(microservice.plannedFeatures)
+                dto.plannedFeatures.putAll(microservice.plannedFeatures)
                 microservice.models.forEach { it.id?.let { id -> dto.modelIds.add(id) } }
                 return dto
             } catch (e : Exception) {
@@ -69,5 +63,9 @@ class Microservice(
                 return null
             }
         }
+    }
+
+    override fun toString(): String {
+        return "Microservice(name='$name', repositoryLink=$repositoryLink, plannedFeatures=$plannedFeatures, contactPerson=$contactPerson, models=$models, sysId=$sysId, id=$id, purpose=$purpose)"
     }
 }

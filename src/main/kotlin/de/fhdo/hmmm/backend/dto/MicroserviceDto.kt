@@ -7,7 +7,7 @@ data class MicroserviceDto(
     var purpose: String? = null,
     var repositoryLink: String? = null,
     var contactPersonId: Long? = null,
-    var plannedFeatures: MutableList<String> = mutableListOf(),
+    var plannedFeatures: MutableMap<String, String> = mutableMapOf(),
     var modelIds: MutableSet<Long> = mutableSetOf(),
     var sysId: Long? = null,
     var id: Long? = null
