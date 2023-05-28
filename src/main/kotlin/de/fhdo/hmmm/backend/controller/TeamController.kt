@@ -1,7 +1,6 @@
 package de.fhdo.hmmm.backend.controller
 
-import de.fhdo.hmmm.backend.dto.ServiceStoryDto
-import de.fhdo.hmmm.backend.dto.TeamCreateDto
+import de.fhdo.hmmm.backend.dto.create.TeamCreateDto
 import de.fhdo.hmmm.backend.dto.TeamDto
 import de.fhdo.hmmm.backend.service.TeamService
 import org.springframework.web.bind.annotation.*

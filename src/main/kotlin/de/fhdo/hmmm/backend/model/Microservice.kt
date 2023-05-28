@@ -25,10 +25,6 @@ class Microservice(
     var contactPerson: Member? = null,
 
     @Column(nullable = false)
-    @OneToMany(mappedBy = "microservice", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    val models: MutableSet<ModelArtifact> = mutableSetOf(),
-
-    @Column(nullable = false)
     var sysId: Long,
 
     @Id
@@ -55,7 +51,6 @@ class Microservice(
                 dto.contactPersonId = microservice.contactPerson?.id
                 dto.repositoryLink = microservice.repositoryLink
                 dto.plannedFeatures.putAll(microservice.plannedFeatures)
-                microservice.models.forEach { it.id?.let { id -> dto.modelIds.add(id) } }
                 return dto
             } catch (e : Exception) {
                 logger.info("An error occurred while transforming to Dto")
@@ -66,6 +61,6 @@ class Microservice(
     }
 
     override fun toString(): String {
-        return "Microservice(name='$name', repositoryLink=$repositoryLink, plannedFeatures=$plannedFeatures, contactPerson=$contactPerson, models=$models, sysId=$sysId, id=$id, purpose=$purpose)"
+        return "Microservice(name='$name', repositoryLink=$repositoryLink, plannedFeatures=$plannedFeatures, contactPerson=$contactPerson, sysId=$sysId, id=$id, purpose=$purpose)"
     }
 }

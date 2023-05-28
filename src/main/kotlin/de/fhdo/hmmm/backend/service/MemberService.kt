@@ -27,6 +27,7 @@ class MemberService {
 
     @Autowired
     lateinit var serviceRepo: MicroserviceRepository
+
     /**
      * Creates a new *MemberService* based on the given *name*.
      * @return Dto of the newly created artifact.

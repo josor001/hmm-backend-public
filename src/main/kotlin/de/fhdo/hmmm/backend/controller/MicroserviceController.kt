@@ -1,6 +1,7 @@
 package de.fhdo.hmmm.backend.controller
 
 import de.fhdo.hmmm.backend.dto.*
+import de.fhdo.hmmm.backend.dto.create.MicroserviceCreateDto
 import de.fhdo.hmmm.backend.service.MicroserviceService
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
@@ -37,16 +38,6 @@ class MicroserviceController(val service: MicroserviceService) {
     @PutMapping("")
     private fun updateMicroservice(@RequestBody newService: MicroserviceDto): Mono<MicroserviceDto?>? {
         return Mono.justOrEmpty(service.update(newService))
-    }
-
-    @PutMapping("/{serviceId}/artifacts")
-    private fun addModelArtifact(@PathVariable serviceId: Long, @RequestBody artifactId: Long): Mono<MicroserviceDto?>? {
-        return Mono.justOrEmpty(service.addModelArtifact(serviceId, artifactId))
-    }
-
-    @DeleteMapping("/{serviceId}/artifacts/{artifactId}")
-    private fun removeModelArtifactsById(@PathVariable serviceId: Long, @PathVariable artifactId: Long): Mono<Boolean?> {
-        return Mono.justOrEmpty(service.removeModelArtifact(serviceId, artifactId))
     }
 
     @DeleteMapping("/{id}")

@@ -1,9 +1,7 @@
 package de.fhdo.hmmm.backend.service
 
-import de.fhdo.hmmm.backend.dto.ServiceStoryCreateDto
 import de.fhdo.hmmm.backend.dto.ServiceStoryDto
 import de.fhdo.hmmm.backend.model.ServiceStory
-import de.fhdo.hmmm.backend.model.ServiceStoryEdge
 import de.fhdo.hmmm.backend.repository.MicroserviceRepository
 import de.fhdo.hmmm.backend.repository.ServiceStoryEdgeRepository
 import de.fhdo.hmmm.backend.repository.ServiceStoryRepository
