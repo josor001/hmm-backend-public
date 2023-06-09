@@ -26,6 +26,11 @@ class ServiceStoryController(val storyService: ServiceStoryService) {
         }
     }
 
+    @GetMapping("microservice/{id}")
+    private fun getAllStoriesByMicroservice(@PathVariable id: Long): Flux<ServiceStoryDto> {
+        return Flux.fromIterable(storyService.readAllByMicroserviceId(id))
+    }
+
     @PostMapping("")
     private fun createStory(@RequestBody newStory: ServiceStoryCreateDto): Mono<ServiceStoryDto?>? {
         return Mono.justOrEmpty(storyService.create(newStory.name, newStory.sysId))

@@ -135,8 +135,8 @@ class ServiceStoryService {
     }
 
     /**
-     * Reads all existing *ServiceStory*s.
-     * @return Set of all *ServiceStory*s as *ServiceStoryDto*s.
+     * Reads all existing *ServiceStories*.
+     * @return Set of all *ServiceStories* as *ServiceStoryDto*s.
      */
     fun readAll() : MutableSet<ServiceStoryDto> {
         val retDto = mutableSetOf<ServiceStoryDto>()
@@ -145,9 +145,9 @@ class ServiceStoryService {
     }
 
     /**
-     * Reads all *Team*s for the given sysId.
+     * Reads all *ServiceStories* for the given sysId.
      * @param sysId the systemId to search for.
-     * @return Set of all *Team*s as *TeamDto*s.
+     * @return Set of all *ServiceStories* with the given sysId as *ServiceStoryDto*s.
      */
     fun readAllBySysId(sysId : Long) : MutableSet<ServiceStoryDto> {
         val retDto = mutableSetOf<ServiceStoryDto>()
@@ -155,6 +155,16 @@ class ServiceStoryService {
         return retDto
     }
 
+    /**
+     * Reads *ServiceStories* when they contain a particular microservice as vertex.
+     * @param microserviceId of the microservice to search for.
+     * @return Set of all *ServiceStories* containing the given microserviceId as vertex.
+     */
+    fun readAllByMicroserviceId(microserviceId : Long) : MutableSet<ServiceStoryDto> {
+        val retDto = mutableSetOf<ServiceStoryDto>()
+        storyRepo.findServiceStoriesByVerticesContains(microserviceId).forEach { ServiceStory.toDto(it)?.let { dto -> retDto.add(dto) } }
+        return retDto
+    }
 
     /**
      * Updates an existing *ServiceStory* by its *ServiceStoryDto*. Entity must have been persisted, i.e., the dto
