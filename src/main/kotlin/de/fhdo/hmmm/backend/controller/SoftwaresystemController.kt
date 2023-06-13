@@ -1,6 +1,7 @@
 package de.fhdo.hmmm.backend.controller
 
 import de.fhdo.hmmm.backend.dto.SoftwaresystemDto
+import de.fhdo.hmmm.backend.dto.create.SoftwaresystemCreateDto
 import de.fhdo.hmmm.backend.service.SoftwaresystemService
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
@@ -22,8 +23,8 @@ class SoftwaresystemController(val service: SoftwaresystemService) {
     }
 
     @PostMapping("")
-    private fun createSystem(@RequestBody name: String): Mono<SoftwaresystemDto?>? {
-        return Mono.justOrEmpty(service.create(name))
+    private fun createSystem(@RequestBody newSystem: SoftwaresystemCreateDto): Mono<SoftwaresystemDto?>? {
+        return Mono.justOrEmpty(service.create(newSystem.name, newSystem.description))
     }
 
     @PutMapping("")

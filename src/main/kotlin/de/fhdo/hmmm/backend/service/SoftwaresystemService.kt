@@ -23,11 +23,11 @@ class SoftwaresystemService {
     lateinit var systemRepo : SoftwaresystemRepository
 
     /**
-     * Creates a new *Softwaresystem* based on the given *name*.
+     * Creates a new *Softwaresystem* based on the given *name* and *description*.
      * @return Dto of the newly created Softwaresystem.
      */
-    fun create(name : String) : SoftwaresystemDto? {
-        val newSystem = systemRepo.save(Softwaresystem(name))
+    fun create(name : String, description: String) : SoftwaresystemDto? {
+        val newSystem = systemRepo.save(Softwaresystem(name = name, description = description))
         return Softwaresystem.toDto(newSystem)
     }
 
