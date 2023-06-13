@@ -1,10 +1,7 @@
 package de.fhdo.hmmm.backend.service
 
-import de.fhdo.hmmm.backend.dto.OrganizationDto
 import de.fhdo.hmmm.backend.dto.SoftwaresystemDto
 import de.fhdo.hmmm.backend.model.Softwaresystem
-import de.fhdo.hmmm.backend.repository.MicroserviceRepository
-import de.fhdo.hmmm.backend.repository.ServiceStoryRepository
 import de.fhdo.hmmm.backend.repository.SoftwaresystemRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
