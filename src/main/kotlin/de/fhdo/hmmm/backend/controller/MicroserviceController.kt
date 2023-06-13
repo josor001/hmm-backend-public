@@ -3,6 +3,7 @@ package de.fhdo.hmmm.backend.controller
 import de.fhdo.hmmm.backend.dto.*
 import de.fhdo.hmmm.backend.dto.create.MicroserviceCreateDto
 import de.fhdo.hmmm.backend.service.MicroserviceService
+import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -15,6 +16,9 @@ import reactor.core.publisher.Mono
 @RequestMapping("/microservices")
 @RestController
 class MicroserviceController(val service: MicroserviceService) {
+
+    val logger = LoggerFactory.getLogger(MicroserviceController::class.java)
+
     @GetMapping("/{id}")
     private fun getMicroserviceById(@PathVariable id: Long): Mono<MicroserviceDto?> {
         return Mono.justOrEmpty(service.read(id))
@@ -37,6 +41,7 @@ class MicroserviceController(val service: MicroserviceService) {
 
     @PutMapping("")
     private fun updateMicroservice(@RequestBody newService: MicroserviceDto): Mono<MicroserviceDto?>? {
+        logger.info(newService.toString());
         return Mono.justOrEmpty(service.update(newService))
     }
 

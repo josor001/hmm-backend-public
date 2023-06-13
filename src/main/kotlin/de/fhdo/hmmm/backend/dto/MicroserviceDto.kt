@@ -6,6 +6,7 @@ data class MicroserviceDto(
     var name: String? = null,
     var purpose: String? = null,
     var repositoryLink: String? = null,
+    var issueLink: String? = null,
     var contactPersonId: Long? = null,
     var plannedFeatures: MutableMap<String, String> = mutableMapOf(),
     var sysId: Long? = null,

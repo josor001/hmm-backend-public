@@ -82,6 +82,7 @@ class MicroserviceService {
             found.name = service.name!!
             found.purpose = service.purpose
             found.repositoryLink = service.repositoryLink
+            found.issueLink = service.issueLink
             found.plannedFeatures = service.plannedFeatures
             found.contactPerson = service.contactPersonId?.let { memberRepo.findById(it).orElseThrow() }
             return Microservice.toDto(microserviceRepo.save(found))

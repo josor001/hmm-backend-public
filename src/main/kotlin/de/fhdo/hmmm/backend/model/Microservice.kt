@@ -14,6 +14,9 @@ class Microservice(
     @Column(nullable = true)
     var repositoryLink: String? = null,
 
+    @Column(nullable = true)
+    var issueLink: String? = null,
+
     //inserted due to results from interview series
     @ElementCollection(fetch = FetchType.EAGER)
     @Column(nullable = false)
@@ -33,11 +36,7 @@ class Microservice(
 
     @Column(nullable = true)
     var purpose: String? = null,
-
 ) {
-
-
-
 
     companion object {
         val logger = LoggerFactory.getLogger(Microservice::class.java)
@@ -50,6 +49,7 @@ class Microservice(
                 dto.purpose = microservice.purpose
                 dto.contactPersonId = microservice.contactPerson?.id
                 dto.repositoryLink = microservice.repositoryLink
+                dto.issueLink = microservice.issueLink
                 dto.plannedFeatures.putAll(microservice.plannedFeatures)
                 return dto
             } catch (e : Exception) {
@@ -61,6 +61,6 @@ class Microservice(
     }
 
     override fun toString(): String {
-        return "Microservice(name='$name', repositoryLink=$repositoryLink, plannedFeatures=$plannedFeatures, contactPerson=$contactPerson, sysId=$sysId, id=$id, purpose=$purpose)"
+        return "Microservice(name='$name', repositoryLink=$repositoryLink, issueLink=$issueLink, plannedFeatures=$plannedFeatures, contactPerson=$contactPerson, sysId=$sysId, id=$id, purpose=$purpose)"
     }
 }
