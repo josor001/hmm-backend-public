@@ -11,12 +11,7 @@ class Softwaresystem(
     var name: String,
 
     @Column(nullable = true)
-    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    val components: MutableSet<Microservice> = mutableSetOf(),
-
-    @Column(nullable = true)
-    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    val stories: MutableSet<ServiceStory> = mutableSetOf(),
+    var description: String? = null,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +19,7 @@ class Softwaresystem(
 ) {
     override fun toString(): String {
         return "Softwaresystem(name='$name', " +
+                "description=$description, " +
                 "id=$id)"
     }
 
@@ -34,8 +30,7 @@ class Softwaresystem(
                 var dto = SoftwaresystemDto()
                 dto.id = system.id
                 dto.name = system.name
-                system.components.forEach { it.id?.let { id -> dto.componentIds.add(id) } }
-                system.stories.forEach { it.id?.let { id -> dto.storyIds.add(id) } }
+                dto.description = system.description
                 return dto
             } catch (e : Exception) {
                 logger.info("An error occurred while transforming to Dto")

@@ -9,13 +9,17 @@ class ModelArtifact(
     @Column(nullable = false)
     var name: String,
 
+    @Column(nullable = false)
+    var microserviceId: Long,
+
+    @Column(nullable = false)
+    var sysId: Long,
+
     var kind: String? = null,
 
     var location: String? = null,
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "microservice_id")
-    var microservice: Microservice? = null,
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,8 +28,9 @@ class ModelArtifact(
     override fun toString(): String {
         return "ModelArtifact(name='$name', " +
                 "kind=$kind, " +
-                "relativeLocation='$location', " +
-                "microservice=$microservice, " +
+                "microserviceId='$microserviceId', " +
+                "location='$location', " +
+                "sysId='$sysId', " +
                 "id=$id)"
     }
     companion object {
@@ -36,9 +41,9 @@ class ModelArtifact(
                 dto.id = model.id
                 dto.name = model.name
                 dto.kind = model.kind
+                dto.microserviceId = model.microserviceId
+                dto.sysId = model.sysId
                 dto.location = model.location
-                if(model.microservice != null)
-                    dto.microserviceId = model.microservice!!.id
                 return dto
             } catch (e : Exception) {
                 logger.info("An error occurred while transforming to Dto")

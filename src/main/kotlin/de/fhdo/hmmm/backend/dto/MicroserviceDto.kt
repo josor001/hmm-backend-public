@@ -6,9 +6,9 @@ data class MicroserviceDto(
     var name: String? = null,
     var purpose: String? = null,
     var repositoryLink: String? = null,
+    var issueLink: String? = null,
     var contactPersonId: Long? = null,
-    var plannedFeatures: MutableList<String> = mutableListOf(),
-    var modelIds: MutableSet<Long> = mutableSetOf(),
+    var plannedFeatures: MutableMap<String, String> = mutableMapOf(),
     var sysId: Long? = null,
     var id: Long? = null
 ) : Serializable

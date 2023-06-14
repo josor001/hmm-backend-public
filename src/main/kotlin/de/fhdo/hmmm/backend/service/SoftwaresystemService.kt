@@ -1,11 +1,8 @@
 package de.fhdo.hmmm.backend.service
 
-import de.fhdo.hmmm.backend.dto.OrganizationDto
 import de.fhdo.hmmm.backend.dto.SoftwaresystemDto
 import de.fhdo.hmmm.backend.model.Softwaresystem
-import de.fhdo.hmmm.backend.repository.MicroserviceRepository
-import de.fhdo.hmmm.backend.repository.ServiceStoryRepository
-import de.fhdo.hmmm.backend.repository.SoftwaresystemRepository
+import de.fhdo.hmmm.backend.repository.*
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -26,99 +23,25 @@ class SoftwaresystemService {
     lateinit var microserviceRepo : MicroserviceRepository
 
     @Autowired
+    lateinit var microserviceService : MicroserviceService
+
+    @Autowired
     lateinit var storyRepo : ServiceStoryRepository
 
-    /**
-     * Adds a *Microservice* to the system. Microservice must have been persisted, i.e., contains an id.
-     * @param systemId Identifier of the *Softwaresystem* that will add the *Microservice*.
-     * @param serviceId Identifier of the Microservice that will be added.
-     * @return *SoftwaresystemDto* of the updated *Softwaresystem* with added *Microservice*
-     * @throws NoSuchElementException if system or microservice objects with the given ids cannot be found.
-     */
-    fun addMicroservice(systemId : Long, serviceId : Long) : SoftwaresystemDto? {
-        val foundSystem = systemRepo.findById(systemId)
-        val foundService = microserviceRepo.findById(serviceId)
-        if(foundSystem.isEmpty) {
-            throw NoSuchElementException("No System with id ${systemId} found.")
-        }
-        if(foundService.isEmpty) {
-            throw NoSuchElementException("No Microservice with id ${serviceId} found.")
-        }
-        foundSystem.get().components.add(foundService.get())
-        return Softwaresystem.toDto(systemRepo.save(foundSystem.get()))
-    }
+    @Autowired
+    lateinit var storyService : ServiceStoryService
 
-    /**
-     * Removes a *Microservice* from a *Softwaresystem*.
-     * @param systemId Identifier of the *Softwaresystem*.
-     * @param serviceId Identifier of the *Microservice*.
-     * @return true or false regarding operation success.
-     * @throws NoSuchElementException if system or microservice objects with the given ids cannot be found.
-     */
-    fun removeMicroservice(systemId : Long, serviceId : Long) : Boolean {
-        val foundSystem = systemRepo.findById(systemId)
-        val foundService = microserviceRepo.findById(serviceId)
-        if(foundSystem.isEmpty) {
-            throw NoSuchElementException("No System with id ${systemId} found.")
-        }
-        if(foundService.isEmpty) {
-            throw NoSuchElementException("No Microservice with id ${serviceId} found.")
-        }
-        if(foundSystem.get().components.remove(foundService.get())) {
-            systemRepo.save(foundSystem.get())
-            return true
-        } else return false
-    }
+    @Autowired
+    lateinit var teamRepo : TeamRepository
 
+    @Autowired
+    lateinit var memberRepo : MemberRepository
     /**
-     * Adds a *ServiceStory* to a *Softwaresystem*. ServiceStory must have been persisted, i.e., it contains an id.
-     * @param systemId Identifier of the *Softwaresystem*.
-     * @param storyId Identifier of the *ServiceStory*.
-     * @return *SoftwaresystemDto* of the updated *Softwaresystem*.
-     * @throws NoSuchElementException if system or service story objects with the given ids cannot be found.
-     */
-    fun addServiceStory(systemId : Long, storyId : Long) : SoftwaresystemDto? {
-        val foundSystem = systemRepo.findById(systemId)
-        val foundStory = storyRepo.findById(storyId)
-        if(foundSystem.isEmpty) {
-            throw NoSuchElementException("No System with id ${systemId} found.")
-        }
-        if(foundStory.isEmpty) {
-            throw NoSuchElementException("No ServiceStory with id ${storyId} found.")
-        }
-        foundSystem.get().stories.add(foundStory.get())
-        return Softwaresystem.toDto(systemRepo.save(foundSystem.get()))
-    }
-
-    /**
-     * Removes a *ServiceStory* from a *Softwaresystem*.
-     * @param systemId Identifier of the *Softwaresystem*.
-     * @param storyId Identifier of the *ServiceStory*.
-     * @return true or false regarding operation success.
-     * @throws NoSuchElementException if system or service story objects with the given ids cannot be found.
-     */
-    fun removeServiceStory(systemId : Long, storyId : Long) : Boolean {
-        val foundSystem = systemRepo.findById(systemId)
-        val foundStory = storyRepo.findById(storyId)
-        if(foundSystem.isEmpty) {
-            throw NoSuchElementException("No System with id ${systemId} found.")
-        }
-        if(foundStory.isEmpty) {
-            throw NoSuchElementException("No ServiceStory with id ${storyId} found.")
-        }
-        if(foundSystem.get().stories.remove(foundStory.get())) {
-            systemRepo.save(foundSystem.get())
-            return true
-        } else return false
-    }
-
-
-    /**
-     * Creates a new *Softwaresystem* based on the given *name*.
+     * Creates a new *Softwaresystem* based on the given *name* and *description*.
      * @return Dto of the newly created Softwaresystem.
      */
-    fun create(name : String) : SoftwaresystemDto? {
-        val newSystem = systemRepo.save(Softwaresystem(name))
+    fun create(name : String, description: String) : SoftwaresystemDto? {
+        val newSystem = systemRepo.save(Softwaresystem(name = name, description = description))
         return Softwaresystem.toDto(newSystem)
     }
 
@@ -150,16 +73,7 @@ class SoftwaresystemService {
         val found = system.id?.let { systemRepo.findById(it).orElse(null) }
         if(found != null) {
             found.name = system.name!!
-            found.components.clear()
-            system.componentIds.forEach {
-                //TODO Check if this works or JPA struggles with OneToMany maintained in Many part.
-                found.components.add(microserviceRepo.findById(it).get())
-            }
-            found.stories.clear()
-            system.storyIds.forEach {
-                //TODO Check if this works or JPA struggles with OneToMany maintained in Many part.
-                found.stories.add(storyRepo.findById(it).get())
-            }
+            found.description = system.description!!
             return Softwaresystem.toDto(systemRepo.save(found))
         }
         return null
@@ -171,7 +85,23 @@ class SoftwaresystemService {
      */
     fun delete(id : Long) : Boolean {
         if(systemRepo.findById(id).isPresent) {
+            //delete Microservices with fitting SysId
+            //Use service to delete because this deletes ModelArtifacts, too!
+            microserviceRepo.findMicroservicesBySysId(id).forEach {
+                microservice -> microservice.id?.let { microserviceService.delete(it) }
+            }
+            //delete ServiceStories with fitting SysId
+            //Use service to delete because this deletes Edges, too!
+            storyRepo.findServiceStoriesBySysId(id).forEach {
+                story -> story.id?.let { storyService.delete(it) }
+            }
+            //delete Teams
+            teamRepo.findTeamsBySysId(id).forEach { team -> team.id?.let {teamRepo.deleteById(it)} }
+            //delete Members
+            memberRepo.findMembersBySysId(id).forEach { member ->  member.id?.let {memberRepo.deleteById(it)}}
+            //actual delete of System
             systemRepo.deleteById(id)
+
             return true
         } else {
             logger.debug("Could not find softwaresystem with id = $id")

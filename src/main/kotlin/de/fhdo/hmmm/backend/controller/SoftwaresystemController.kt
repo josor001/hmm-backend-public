@@ -1,6 +1,7 @@
 package de.fhdo.hmmm.backend.controller
 
 import de.fhdo.hmmm.backend.dto.SoftwaresystemDto
+import de.fhdo.hmmm.backend.dto.create.SoftwaresystemCreateDto
 import de.fhdo.hmmm.backend.service.SoftwaresystemService
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
@@ -22,33 +23,13 @@ class SoftwaresystemController(val service: SoftwaresystemService) {
     }
 
     @PostMapping("")
-    private fun createSystem(@RequestBody name: String): Mono<SoftwaresystemDto?>? {
-        return Mono.justOrEmpty(service.create(name))
+    private fun createSystem(@RequestBody newSystem: SoftwaresystemCreateDto): Mono<SoftwaresystemDto?>? {
+        return Mono.justOrEmpty(service.create(newSystem.name, newSystem.description))
     }
 
     @PutMapping("")
     private fun updateSystem(@RequestBody updatedSystem: SoftwaresystemDto): Mono<SoftwaresystemDto?>? {
         return Mono.justOrEmpty(service.update(updatedSystem))
-    }
-
-    @PutMapping("/{id}/microservices")
-    private fun addMicroservice(@PathVariable id: Long, @RequestBody serviceId: Long): Mono<SoftwaresystemDto?>? {
-        return Mono.justOrEmpty(service.addMicroservice(id, serviceId))
-    }
-
-    @DeleteMapping("/{id}/microservices/{serviceId}")
-    private fun deleteMicroserviceFromSystemById(@PathVariable id: Long, @PathVariable serviceId: Long): Mono<Boolean?> {
-        return Mono.justOrEmpty(service.removeMicroservice(id, serviceId))
-    }
-
-    @PutMapping("/{id}/stories")
-    private fun addStory(@PathVariable id: Long, @RequestBody storyId: Long): Mono<SoftwaresystemDto?>? {
-        return Mono.justOrEmpty(service.addServiceStory(id, storyId))
-    }
-
-    @DeleteMapping("/{id}/stories/{storyId}")
-    private fun deleteStoryFromSystemById(@PathVariable id: Long, @PathVariable storyId: Long): Mono<Boolean?> {
-        return Mono.justOrEmpty(service.removeServiceStory(id, storyId))
     }
 
     @DeleteMapping("/{id}")

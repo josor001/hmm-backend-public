@@ -31,46 +31,6 @@ class MicroserviceService {
 
     @Autowired
     lateinit var memberRepo : MemberRepository
-    /**
-     * Adds a *ModelArtifact* to a microservice. The artifact must have been persisted, i.e., it must contain an id.
-     * @param serviceId Identifier of the Microservice that will add the *ModelArtifact*.
-     * @param artifactId Identifier of the *ModelArtifact* that will be added to the *Microservice*.
-     * @return *MicroserviceDto* of the updated *Microservice* with added *ModelArtifact*.
-     * @throws NoSuchElementException if model or microservice objects with the given ids cannot be found.
-     */
-    fun addModelArtifact(serviceId : Long, artifactId : Long) : MicroserviceDto? {
-        val foundService = microserviceRepo.findById(serviceId)
-        val foundModel = modelArtifactRepo.findById(artifactId)
-        if(foundService.isEmpty) {
-            throw NoSuchElementException("No microservice with id $serviceId found.")
-        }
-        if(foundModel.isEmpty) {
-            throw NoSuchElementException("No model artifact with id $artifactId found.")
-        }
-        foundService.get().models.add(foundModel.get())
-        return Microservice.toDto(microserviceRepo.save(foundService.get()))
-    }
-
-    /**
-     * Removes a *ModelArtifact* from a microservice.
-     * @param serviceId Identifier of the Microservice that will add the *ModelArtifact*.
-     * @param artifactId Identifier of the *ModelArtifact* that will be added to the *Microservice*.
-     * @return True if removal was successful. Otherwise, false.
-     */
-    fun removeModelArtifact(serviceId : Long, artifactId : Long) : Boolean {
-        val foundService = microserviceRepo.findById(serviceId)
-        val foundModel = modelArtifactRepo.findById(artifactId)
-        if(foundService.isEmpty) {
-            throw NoSuchElementException("No microservice with id $serviceId found.")
-        }
-        if(foundModel.isEmpty) {
-            throw NoSuchElementException("No model artifact with id $artifactId found.")
-        }
-        return if(foundService.get().models.remove(foundModel.get())) {
-            microserviceRepo.save(foundService.get())
-            true
-        } else false
-    }
 
     /**
      * Creates a new *Microservice* based on the given *name*.
@@ -122,16 +82,9 @@ class MicroserviceService {
             found.name = service.name!!
             found.purpose = service.purpose
             found.repositoryLink = service.repositoryLink
+            found.issueLink = service.issueLink
             found.plannedFeatures = service.plannedFeatures
             found.contactPerson = service.contactPersonId?.let { memberRepo.findById(it).orElseThrow() }
-            found.models.clear()
-            service.modelIds.forEach {
-                // due to JPA the ref is maintained in the One-part of ManyToOne.
-                // I.e. in this case it is necessary to update each artifact.
-                val artifact = modelArtifactRepo.findById(it).get()
-                artifact.microservice = found
-                modelArtifactRepo.save(artifact)
-            }
             return Microservice.toDto(microserviceRepo.save(found))
         }
         return null
@@ -159,6 +112,13 @@ class MicroserviceService {
                 if(deletedFromStory)
                     storyRepo.save(serviceStory)
             }
+
+            //Delete possible existing model artifacts
+            val possibleArtifacts = modelArtifactRepo.findModelArtifactsByMicroserviceId(toBeDeleted.get().id!!)
+            possibleArtifacts.forEach { modelArtifact ->
+                modelArtifactRepo.deleteById(modelArtifact.id!!)
+            }
+
             //Actual delete
             microserviceRepo.deleteById(id)
             return true

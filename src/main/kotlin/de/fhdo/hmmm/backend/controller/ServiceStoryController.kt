@@ -1,6 +1,6 @@
 package de.fhdo.hmmm.backend.controller
 
-import de.fhdo.hmmm.backend.dto.ServiceStoryCreateDto
+import de.fhdo.hmmm.backend.dto.create.ServiceStoryCreateDto
 import de.fhdo.hmmm.backend.dto.ServiceStoryDto
 import de.fhdo.hmmm.backend.service.ServiceStoryService
 import org.springframework.web.bind.annotation.*
@@ -24,6 +24,11 @@ class ServiceStoryController(val storyService: ServiceStoryService) {
         } else {
             return Flux.fromIterable(storyService.readAllBySysId(sysId))
         }
+    }
+
+    @GetMapping("microservice/{id}")
+    private fun getAllStoriesByMicroservice(@PathVariable id: Long): Flux<ServiceStoryDto> {
+        return Flux.fromIterable(storyService.readAllByMicroserviceId(id))
     }
 
     @PostMapping("")

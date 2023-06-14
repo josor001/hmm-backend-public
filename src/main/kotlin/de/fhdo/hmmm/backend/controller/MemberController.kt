@@ -1,6 +1,6 @@
 package de.fhdo.hmmm.backend.controller
 
-import de.fhdo.hmmm.backend.dto.MemberCreateDto
+import de.fhdo.hmmm.backend.dto.create.MemberCreateDto
 import de.fhdo.hmmm.backend.dto.MemberDto
 import de.fhdo.hmmm.backend.service.MemberService
 import org.springframework.web.bind.annotation.*

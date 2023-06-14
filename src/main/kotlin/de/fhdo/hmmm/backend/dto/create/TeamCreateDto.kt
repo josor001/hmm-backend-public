@@ -1,8 +1,8 @@
-package de.fhdo.hmmm.backend.dto
+package de.fhdo.hmmm.backend.dto.create
 
 import java.io.Serializable
 
-data class MicroserviceCreateDto(
+data class TeamCreateDto(
     val name: String,
     val sysId: Long,
 ) : Serializable

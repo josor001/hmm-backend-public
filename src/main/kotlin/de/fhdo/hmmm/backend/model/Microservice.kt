@@ -14,19 +14,18 @@ class Microservice(
     @Column(nullable = true)
     var repositoryLink: String? = null,
 
+    @Column(nullable = true)
+    var issueLink: String? = null,
+
     //inserted due to results from interview series
     @ElementCollection(fetch = FetchType.EAGER)
     @Column(nullable = false)
-    var plannedFeatures: MutableList<String> = mutableListOf(),
+    var plannedFeatures: MutableMap<String, String> = mutableMapOf(),
 
     //inserted due to results from interview series
     //owning side
     @OneToOne(cascade = [CascadeType.PERSIST], fetch = FetchType.EAGER, optional = true)
     var contactPerson: Member? = null,
-
-    @Column(nullable = false)
-    @OneToMany(mappedBy = "microservice", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    val models: MutableSet<ModelArtifact> = mutableSetOf(),
 
     @Column(nullable = false)
     var sysId: Long,
@@ -37,18 +36,8 @@ class Microservice(
 
     @Column(nullable = true)
     var purpose: String? = null,
-
 ) {
-    override fun toString(): String {
-        return "Microservice(name='$name', " +
-                "purpose='$purpose', " +
-                "repositoryLink='$repositoryLink', " +
-                "plannedFeatures=${plannedFeatures.joinToString(prefix = "[", postfix = "]", separator= ",")}, " +
-                "contactPerson='$contactPerson', " +
-                "models=${models.joinToString(prefix = "[", postfix = "]", separator= ",")}, " +
-                "sysId='$sysId', " +
-                "id=$id)"
-    }
+
     companion object {
         val logger = LoggerFactory.getLogger(Microservice::class.java)
         fun toDto(microservice: Microservice): MicroserviceDto? {
@@ -60,8 +49,8 @@ class Microservice(
                 dto.purpose = microservice.purpose
                 dto.contactPersonId = microservice.contactPerson?.id
                 dto.repositoryLink = microservice.repositoryLink
-                dto.plannedFeatures.addAll(microservice.plannedFeatures)
-                microservice.models.forEach { it.id?.let { id -> dto.modelIds.add(id) } }
+                dto.issueLink = microservice.issueLink
+                dto.plannedFeatures.putAll(microservice.plannedFeatures)
                 return dto
             } catch (e : Exception) {
                 logger.info("An error occurred while transforming to Dto")
@@ -69,5 +58,9 @@ class Microservice(
                 return null
             }
         }
+    }
+
+    override fun toString(): String {
+        return "Microservice(name='$name', repositoryLink=$repositoryLink, issueLink=$issueLink, plannedFeatures=$plannedFeatures, contactPerson=$contactPerson, sysId=$sysId, id=$id, purpose=$purpose)"
     }
 }
