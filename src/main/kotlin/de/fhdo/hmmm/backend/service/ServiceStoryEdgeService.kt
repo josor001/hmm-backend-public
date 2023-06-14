@@ -113,7 +113,7 @@ class ServiceStoryEdgeService {
             edgeRepo.deleteById(id)
             return true
         } else {
-            logger.debug("Could not find ServiceStoryEdge with id = $id")
+            logger.info("Could not find ServiceStoryEdge with id = $id")
             return false
         }
     }

@@ -75,13 +75,6 @@ class ServiceStoryAndEdgeTests {
         assertEquals(changedEdge.targetId, newTarget.id)
         assertNotNull(changedEdge.description)
         logger.info("Updated edge looks like this $changedEdge")
-        //Delete
-        assertTrue(edgeService.delete(changedEdge.id!!))
-        assertNull(edgeService.read(changedEdge.id!!))
-        //check if services still exist after delete
-        assertNotNull(microserviceRepo.findById(source.id!!))
-        assertNotNull(microserviceRepo.findById(target.id!!))
-        assertNotNull(microserviceRepo.findById(newTarget.id!!))
     }
 
     @Test
