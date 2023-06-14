@@ -2,7 +2,7 @@ package de.fhdo.hmmm.backend.service
 
 import de.fhdo.hmmm.backend.dto.SoftwaresystemDto
 import de.fhdo.hmmm.backend.model.Softwaresystem
-import de.fhdo.hmmm.backend.repository.SoftwaresystemRepository
+import de.fhdo.hmmm.backend.repository.*
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -19,6 +19,23 @@ class SoftwaresystemService {
     @Autowired
     lateinit var systemRepo : SoftwaresystemRepository
 
+    @Autowired
+    lateinit var microserviceRepo : MicroserviceRepository
+
+    @Autowired
+    lateinit var microserviceService : MicroserviceService
+
+    @Autowired
+    lateinit var storyRepo : ServiceStoryRepository
+
+    @Autowired
+    lateinit var storyService : ServiceStoryService
+
+    @Autowired
+    lateinit var teamRepo : TeamRepository
+
+    @Autowired
+    lateinit var memberRepo : MemberRepository
     /**
      * Creates a new *Softwaresystem* based on the given *name* and *description*.
      * @return Dto of the newly created Softwaresystem.
@@ -68,7 +85,23 @@ class SoftwaresystemService {
      */
     fun delete(id : Long) : Boolean {
         if(systemRepo.findById(id).isPresent) {
+            //delete Microservices with fitting SysId
+            //Use service to delete because this deletes ModelArtifacts, too!
+            microserviceRepo.findMicroservicesBySysId(id).forEach {
+                microservice -> microservice.id?.let { microserviceService.delete(it) }
+            }
+            //delete ServiceStories with fitting SysId
+            //Use service to delete because this deletes Edges, too!
+            storyRepo.findServiceStoriesBySysId(id).forEach {
+                story -> story.id?.let { storyService.delete(it) }
+            }
+            //delete Teams
+            teamRepo.findTeamsBySysId(id).forEach { team -> team.id?.let {teamRepo.deleteById(it)} }
+            //delete Members
+            memberRepo.findMembersBySysId(id).forEach { member ->  member.id?.let {memberRepo.deleteById(it)}}
+            //actual delete of System
             systemRepo.deleteById(id)
+
             return true
         } else {
             logger.debug("Could not find softwaresystem with id = $id")
